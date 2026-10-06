@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="100%" height="100%">
+  <defs>
+    <!-- 深海・水底の漆黒グラデーション -->
+    <linearGradient id="atl-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#020d18"/>
+      <stop offset="40%" stop-color="#051626"/>
+      <stop offset="80%" stop-color="#010810"/>
+      <stop offset="100%" stop-color="#000308"/>
+    </linearGradient>
+
+    <!-- 主波長：超高圧アクアブルー -->
+    <linearGradient id="atl-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#70ffff"/>
+      <stop offset="30%" stop-color="#00d5ff"/>
+      <stop offset="70%" stop-color="#0066b3"/>
+      <stop offset="100%" stop-color="#002b52"/>
+    </linearGradient>
+
+    <!-- 補色：深層ディープコバルト -->
+    <linearGradient id="atl-deep-blue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#003b66"/>
+      <stop offset="50%" stop-color="#001833"/>
+      <stop offset="100%" stop-color="#000a17"/>
+    </linearGradient>
+
+    <!-- 高級水密スチール＆プラチナ -->
+    <linearGradient id="atl-steel" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="25%" stop-color="#cde8f5"/>
+      <stop offset="50%" stop-color="#6992ad"/>
+      <stop offset="75%" stop-color="#2a4559"/>
+      <stop offset="100%" stop-color="#101d26"/>
+    </linearGradient>
+
+    <!-- アトランタ古代技術：水脈ゴールド -->
+    <linearGradient id="atl-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff5cc"/>
+      <stop offset="50%" stop-color="#38a3a5"/>
+      <stop offset="100%" stop-color="#00ffcc"/>
+    </linearGradient>
+
+    <!-- 発光グローフィルター -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- 背景ベース -->
+  <rect x="0" y="0" width="900" height="600" fill="url(#atl-bg)"/>
+
+  <!-- 背景：巨大な古代アトランタ水圧魔法陣/幾何学グリッド -->
+  <g opacity="0.25">
+    <circle cx="450" cy="300" r="260" fill="none" stroke="url(#atl-cyan)" stroke-width="1"/>
+    <circle cx="450" cy="300" r="245" fill="none" stroke="url(#atl-cyan)" stroke-width="2" stroke-dasharray="4, 8"/>
+    <circle cx="450" cy="300" r="230" fill="none" stroke="url(#atl-steel)" stroke-width="1"/>
+    <!-- 八方向の水流レイヤー線 -->
+    <g stroke="url(#atl-cyan)" stroke-width="1" stroke-dasharray="15, 10">
+      <line x1="450" y1="30" x2="450" y2="570"/>
+      <line x1="180" y1="300" x2="720" y2="300"/>
+      <line x1="259" y1="109" x2="641" y2="491"/>
+      <line x1="259" y1="491" x2="641" y2="109"/>
+    </g>
+  </g>
+
+  <!-- 上下：重層化された高高度/水密警戒帯 -->
+  <g>
+    <rect x="0" y="0" width="900" height="16" fill="url(#atl-cyan)"/>
+    <rect x="0" y="16" width="900" height="4" fill="url(#atl-steel)"/>
+    <rect x="0" y="23" width="900" height="2" fill="url(#atl-cyan)" opacity="0.6"/>
+    
+    <rect x="0" y="584" width="900" height="16" fill="url(#atl-cyan)"/>
+    <rect x="0" y="580" width="900" height="4" fill="url(#atl-steel)"/>
+    <rect x="0" y="575" width="900" height="2" fill="url(#atl-cyan)" opacity="0.6"/>
+  </g>
+
+  <!-- 中央メインエンブレム構造 -->
+  <g transform="translate(450, 300)">
+    
+    <!-- 第1層：外郭重装甲ハッチ（12角形・高水圧対抗アーマー） -->
+    <polygon points="
+      0,-225 113,-195 195,-113 225,0 195,113 113,195
+      0,225 -113,195 -195,113 -225,0 -195,-113 -113,-195" 
+      fill="url(#atl-deep-blue)" stroke="url(#atl-steel)" stroke-width="6"/>
+
+    <!-- 外郭ボルト留め装甲ディテール -->
+    <polygon points="
+      0,-210 105,-182 182,-105 210,0 182,105 105,182
+      0,210 -105,182 -182,105 -210,0 -182,-105 -105,-182" 
+      fill="none" stroke="url(#atl-cyan)" stroke-width="2" stroke-dasharray="20, 10"/>
+
+    <!-- 第2層：内郭水流ギア構造（回転水流リング） -->
+    <circle cx="0" cy="0" r="165" fill="#010810" stroke="url(#atl-cyan)" stroke-width="4" filter="url(#glow)"/>
+    <circle cx="0" cy="0" r="150" fill="none" stroke="url(#atl-steel)" stroke-width="1" stroke-dasharray="3, 3"/>
+
+    <!-- 第3層：アトランタの象徴「三叉重槍（トリプル・トライデント）」＆水冷コア -->
+    <!-- 背景の水流ブレード（左右・中央へ向かう水流推進翼） -->
+    <g fill="url(#atl-cyan)">
+      <!-- 上方右翼 -->
+      <polygon points="20,-30 140,-120 100,-20 160,20 80,40"/>
+      <!-- 上方左翼 -->
+      <polygon points="-20,-30 -140,-120 -100,-20 -160,20 -80,40"/>
+      <!-- 下方アンカーブレード -->
+      <polygon points="0,60 110,130 50,140 0,180 -50,140 -110,130"/>
+    </g>
+
+    <!-- 水流ブレードのメタリックエッジ（立体ハイライト） -->
+    <g fill="url(#atl-steel)">
+      <polygon points="20,-30 120,-100 90,-20 140,15 75,30"/>
+      <polygon points="-20,-30 -120,-100 -90,-20 -140,15 -75,30"/>
+      <polygon points="0,70 90,120 40,130 0,165 -40,130 -90,120"/>
+    </g>
+
+    <!-- メインの中央三叉槍（メインノーズ/主槍） -->
+    <polygon points="0,-195 22,-40 0,110 -22,-40" fill="url(#atl-steel)"/>
+    <polygon points="0,-195 0,110 -22,-40" fill="#ffffff" opacity="0.8"/> <!-- 鋭利な光沢 -->
+    <polygon points="0,-195 12,-40 0,90 -12,-40" fill="url(#atl-gold)"/> <!-- 水脈ゴールドライン -->
+
+    <!-- 左副槍 -->
+    <polygon points="-40,-60 -85,-160 -55,-50 -25,20" fill="url(#atl-steel)"/>
+    <polygon points="-40,-60 -85,-160 -55,-50" fill="#ffffff" opacity="0.6"/>
+
+    <!-- 右副槍 -->
+    <polygon points="40,-60 85,-160 55,-50 25,20" fill="url(#atl-steel)"/>
+    <polygon points="40,-60 85,-160 55,-50" fill="#ffffff" opacity="0.3"/>
+
+    <!-- 中央水圧コア：高密度エネルギー球体 -->
+    <circle cx="0" cy="0" r="32" fill="#001833" stroke="url(#atl-cyan)" stroke-width="4"/>
+    <circle cx="0" cy="0" r="22" fill="url(#atl-cyan)" filter="url(#glow)"/>
+    <circle cx="-6" cy="-6" r="6" fill="#ffffff" opacity="0.8"/> <!-- 球体ハイライト -->
+
+    <!-- 第4層：水業本部 刻印プレート（重厚なツインプレート） -->
+    <g transform="translate(0, 155)">
+      <!-- バックプレート -->
+      <polygon points="-240,0 240,0 210,48 -210,48" fill="#010a12" stroke="url(#atl-steel)" stroke-width="3"/>
+      <!-- インナー発行枠 -->
+      <polygon points="-230,4 230,4 204,44 -204,44" fill="none" stroke="url(#atl-cyan)" stroke-width="1"/>
+      
+      <!-- テキスト：大日中帝国連邦 水業本部 -->
+      <text x="0" y="28" font-family="'Helvetica Neue', 'Arial', sans-serif" font-size="18" font-weight="900" fill="#ffffff" letter-spacing="7" text-anchor="middle" filter="url(#glow)">
+        大日中帝国連邦 水業本部
+      </text>
+      <!-- テキスト：ATLANTA WATERWORKS HQ -->
+      <text x="0" y="42" font-family="'Courier New', monospace" font-size="9" font-weight="bold" fill="url(#atl-gold)" letter-spacing="4" text-anchor="middle">
+        — WATERWORKS HQ ATLANTA —
+      </text>
+    </g>
+  </g>
+</svg>
