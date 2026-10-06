@@ -1,0 +1,40 @@
+newmtl E:\BlackDesert\character\texture\RS_02_Ship_0002.dds
+d 1
+Ns 1
+Ni 0
+Ka 0 0 0
+Kd 0.80000001 0.80000001 0.80000001
+Ks 0.48627451 0.48627451 0.48627451
+Km 0
+map_Kd "./Maps/paddle .jpeg"
+
+newmtl E:\BlackDesert\character\texture\PRS_01_body_0006.dds
+d 1
+Ns 1
+Ni 0
+Ka 0 0 0
+Kd 0.80000001 0.80000001 0.80000001
+Ks 0.48627451 0.48627451 0.48627451
+Km 0
+map_Kd ./Maps/Body.jpeg
+
+newmtl E:\BlackDesert\character\texture\PRS_01_body_0006.dds_Mesh_001_LOD_0
+d 1
+Ns 1
+Ni 0
+Ka 0 0 0
+Kd 0.80000001 0.80000001 0.80000001
+Ks 0.48627451 0.48627451 0.48627451
+Km 0
+map_Kd ./Maps/Body.jpeg
+
+newmtl E:\BlackDesert\character\texture\PRS_01_body_0006.dds_Mesh_003_LOD_0
+d 1
+Ns 1
+Ni 0
+Ka 0 0 0
+Kd 0.80000001 0.80000001 0.80000001
+Ks 0.48627451 0.48627451 0.48627451
+Km 0
+map_Kd ./Maps/Body.jpeg
+
