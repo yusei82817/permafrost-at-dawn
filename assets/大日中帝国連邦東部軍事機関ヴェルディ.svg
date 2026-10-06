@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="100%" height="100%">
+  <defs>
+    <!-- 深緑・東部暗雲グラデーション -->
+    <linearGradient id="rosette-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#02140d"/>
+      <stop offset="50%" stop-color="#010805"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+
+    <!-- ヴェルディ・エメラルド（鮮烈な毒緑・深緑） -->
+    <linearGradient id="verdi-green" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00ffaa"/>
+      <stop offset="40%" stop-color="#00aa66"/>
+      <stop offset="80%" stop-color="#004d2e"/>
+      <stop offset="100%" stop-color="#001a10"/>
+    </linearGradient>
+
+    <!-- 高貴な薔薇・氷銀グラデーション -->
+    <linearGradient id="rosette-silver" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#b8e0d2"/>
+      <stop offset="100%" stop-color="#5c8075"/>
+    </linearGradient>
+
+    <!-- 青銅・アンティークゴールド -->
+    <linearGradient id="imperial-bronze" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4af37"/>
+      <stop offset="100%" stop-color="#4a5232"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景：漆黒のベース -->
+  <rect x="0" y="0" width="900" height="600" fill="url(#rosette-dark)"/>
+
+  <!-- 背景：東部軍の冷たいエメラルド放射光 -->
+  <circle cx="450" cy="300" r="210" fill="url(#verdi-green)" opacity="0.25"/>
+  <circle cx="450" cy="300" r="210" fill="none" stroke="url(#rosette-silver)" stroke-width="2" stroke-dasharray="16, 8" opacity="0.4"/>
+
+  <!-- 上下の軍事警戒帯（ヴェルディ仕様） -->
+  <rect x="0" y="0" width="900" height="25" fill="url(#verdi-green)"/>
+  <rect x="0" y="25" width="900" height="5" fill="url(#rosette-silver)"/>
+  <rect x="0" y="570" width="900" height="25" fill="url(#verdi-green)"/>
+  <rect x="0" y="570" width="900" height="5" fill="url(#rosette-silver)"/>
+
+  <!-- 中央：ヴェルディ・ロザーヌ 紋章 -->
+  <g transform="translate(450, 300)">
+    
+    <!-- 菱形（ダイヤモンド）型の精密フレーム（情報・狙撃・特殊戦） -->
+    <polygon points="0,-220 180,0 0,220 -180,0" fill="none" stroke="url(#verdi-green)" stroke-width="5"/>
+    <polygon points="0,-195 160,0 0,195 -160,0" fill="#010805" stroke="url(#rosette-silver)" stroke-width="2"/>
+
+    <!-- 「ロザーヌ（薔薇・ロザリオ）」：棘のある幾何学フランドル十字と薔薇モチーフ -->
+    <!-- 垂直・水平の細い鋭剣（十字架） -->
+    <polygon points="0,-180 10,-30 0,150 -10,-30" fill="url(#rosette-silver)"/>
+    <polygon points="-150,0 -30,-10 150,0 -30,10" fill="url(#rosette-silver)"/>
+
+    <!-- 薔薇の棘・葉を模した鋭利な4方ブレード -->
+    <polygon points="0,-100 40,-40 100,0 40,40 0,100 -40,40 -100,0 -40,-40" fill="url(#verdi-green)"/>
+    <polygon points="0,-70 25,-25 70,0 25,25 0,70 -25,25 -70,0 -25,-25" fill="url(#imperial-bronze)"/>
+
+    <!-- 薔薇の蕾（コールド・コア） -->
+    <circle cx="0" cy="0" r="18" fill="#010805" stroke="url(#rosette-silver)" stroke-width="3"/>
+    <polygon points="0,-8 6,4 -6,4" fill="url(#verdi-green)"/>
+
+    <!-- 下部：部隊刻印「VERDI-ROSANNE」 -->
+    <polygon points="-210,135 210,135 180,185 -180,185" fill="#02140d" stroke="url(#verdi-green)" stroke-width="2"/>
+    
+    <text x="0" y="162" font-family="'Helvetica Neue', 'Arial', sans-serif" font-size="18" font-weight="900" fill="#ffffff" letter-spacing="6" text-anchor="middle">
+      大日中帝国連邦 東部軍事機関
+    </text>
+    <text x="0" y="178" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="url(#verdi-green)" letter-spacing="4" text-anchor="middle">
+      VERDI-ROSANNE / EASTERN MILITARY
+    </text>
+  </g>
+</svg>

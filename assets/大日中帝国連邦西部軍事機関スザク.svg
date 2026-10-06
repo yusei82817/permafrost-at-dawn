@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="100%" height="100%">
+  <defs>
+    <!-- 大日中の漆黒×深紅重層グラデーション -->
+    <linearGradient id="suzaku-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#140203"/>
+      <stop offset="50%" stop-color="#080102"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+
+    <!-- アルトヴァイエルの深紅・朱雀の灼熱炎グラデーション -->
+    <linearGradient id="suzaku-crimson" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff3300"/>
+      <stop offset="40%" stop-color="#cc0000"/>
+      <stop offset="80%" stop-color="#660000"/>
+      <stop offset="100%" stop-color="#2a0000"/>
+    </linearGradient>
+
+    <!-- 帝国の荘厳なゴールド（真鍮・金箔イメージ） -->
+    <linearGradient id="imperial-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff0aa"/>
+      <stop offset="30%" stop-color="#d4af37"/>
+      <stop offset="70%" stop-color="#997a15"/>
+      <stop offset="100%" stop-color="#4a3b0a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景：漆黒のベース -->
+  <rect x="0" y="0" width="900" height="600" fill="url(#suzaku-dark)"/>
+
+  <!-- 大日中帝国の太陽（背景の巨大な深紅の日輪） -->
+  <circle cx="450" cy="300" r="210" fill="url(#suzaku-crimson)" opacity="0.3"/>
+  <circle cx="450" cy="300" r="210" fill="none" stroke="url(#imperial-gold)" stroke-width="2" stroke-dasharray="12, 6" opacity="0.5"/>
+
+  <!-- 上下の軍事警戒境界ライン（帝国重装帯） -->
+  <rect x="0" y="0" width="900" height="25" fill="url(#suzaku-crimson)"/>
+  <rect x="0" y="25" width="900" height="5" fill="url(#imperial-gold)"/>
+  <rect x="0" y="570" width="900" height="25" fill="url(#suzaku-crimson)"/>
+  <rect x="0" y="570" width="900" height="5" fill="url(#imperial-gold)"/>
+
+  <!-- 中央：アルトヴァイエル・スザク 紋章 -->
+  <g transform="translate(450, 300)">
+    
+    <!-- 八角型の帝国重装甲フレーム -->
+    <polygon points="0,-210 150,-150 210,0 150,150 0,210 -150,150 -210,0 -150,-150" fill="none" stroke="url(#imperial-gold)" stroke-width="6"/>
+    <polygon points="0,-190 135,-135 190,0 135,135 0,190 -135,135 -190,0 -135,-135" fill="#080102" stroke="url(#suzaku-crimson)" stroke-width="3"/>
+
+    <!-- 「朱雀（スザク）」：燃え盛る翼と炎の剣シルエット -->
+    <!-- 中央の大剣 / 鳳凰の尾羽軸 -->
+    <polygon points="0,-170 18,-40 0,130 -18,-40" fill="url(#imperial-gold)"/>
+    <polygon points="0,-170 0,130 -18,-40" fill="#ffffff" opacity="0.5"/>
+
+    <!-- 朱雀の流線型・鋭角な羽ばたき（両翼） -->
+    <polygon points="20,-50 170,-110 110,-20 180,20 100,60 140,110 50,60 15,20" fill="url(#suzaku-crimson)"/>
+    <polygon points="-20,-50 -170,-110 -110,-20 -180,20 -100,60 -140,110 -50,60 -15,20" fill="url(#suzaku-crimson)"/>
+
+    <!-- 翼のインナー金装飾 -->
+    <polygon points="25,-30 130,-75 90,-10 130,20 80,45 25,10" fill="url(#imperial-gold)"/>
+    <polygon points="-25,-30 -130,-75 -90,-10 -130,20 -80,45 -25,10" fill="url(#imperial-gold)"/>
+
+    <!-- 下部：部隊刻印「ALT WEIER SUZAKU」 -->
+    <polygon points="-200,130 200,130 170,180 -170,180" fill="#140203" stroke="url(#imperial-gold)" stroke-width="2"/>
+    
+    <text x="0" y="158" font-family="'Helvetica Neue', 'Arial', sans-serif" font-size="18" font-weight="900" fill="#ffffff" letter-spacing="6" text-anchor="middle">
+      大日中帝国連邦 西部軍事機関
+    </text>
+    <text x="0" y="174" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="url(#imperial-gold)" letter-spacing="4" text-anchor="middle">
+      ALTWEIER-SUZAKU / WESTERN MILITARY
+    </text>
+  </g>
+</svg>

@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="100%" height="100%">
+  <defs>
+    <!-- 背景：絶望と死の深淵グラデーション -->
+    <linearGradient id="apcb-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1f0208"/>
+      <stop offset="50%" stop-color="#0a0003"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+
+    <!-- 狂気の桜ピンク・朱赤グラデーション -->
+    <linearGradient id="cherry-blood" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffb3d9"/>
+      <stop offset="40%" stop-color="#ff0055"/>
+      <stop offset="80%" stop-color="#800022"/>
+      <stop offset="100%" stop-color="#33000d"/>
+    </linearGradient>
+
+    <!-- 帝国の漆黒金グラデーション -->
+    <linearGradient id="apcb-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#ffccd5"/>
+      <stop offset="100%" stop-color="#d4af37"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景：漆黒 -->
+  <rect x="0" y="0" width="900" height="600" fill="url(#apcb-bg)"/>
+
+  <!-- 上下の流血帯・境界線 -->
+  <rect x="0" y="0" width="900" height="20" fill="url(#cherry-blood)"/>
+  <rect x="0" y="20" width="900" height="4" fill="url(#apcb-gold)"/>
+  <rect x="0" y="576" width="900" height="20" fill="url(#cherry-blood)"/>
+  <rect x="0" y="572" width="900" height="4" fill="url(#apcb-gold)"/>
+
+  <!-- 背景：狂い咲く桜と散る花弁の光線 -->
+  <circle cx="450" cy="300" r="210" fill="url(#cherry-blood)" opacity="0.25"/>
+  <circle cx="450" cy="300" r="210" fill="none" stroke="url(#cherry-blood)" stroke-width="2" stroke-dasharray="6, 12" opacity="0.6"/>
+
+  <!-- 中央部隊章グループ -->
+  <g transform="translate(450, 300)">
+    
+    <!-- 特攻機の照準（ターゲットサイト）と八重桜の重装幾何学 -->
+    <circle cx="0" cy="0" r="185" fill="none" stroke="url(#apcb-gold)" stroke-width="4"/>
+    
+    <!-- 照準線（決死の特攻軌道） -->
+    <line x1="-230" y1="0" x2="230" y2="0" stroke="url(#cherry-blood)" stroke-width="3"/>
+    <line x1="0" y1="-230" x2="0" y2="230" stroke="url(#cherry-blood)" stroke-width="3"/>
+
+    <!-- 「桜紋」と「刃/機首」をあしらった5方の大剣（散り際の一閃） -->
+    <!-- 5方向への刃＝桜の花弁の刃 -->
+    <g fill="url(#cherry-blood)">
+      <!-- 上 -->
+      <polygon points="0,-180 20,-50 0,0 -20,-50"/>
+      <!-- 右上 -->
+      <polygon points="171,-55 47,-15 0,0 32,-38"/>
+      <!-- 右下 -->
+      <polygon points="105,145 30,38 0,0 47,15"/>
+      <!-- 左下 -->
+      <polygon points="-105,145 -47,15 0,0 -30,38"/>
+      <!-- 左上 -->
+      <polygon points="-171,-55 -32,-38 0,0 -47,-15"/>
+    </g>
+
+    <!-- 中央の散り行く「桜花」グラフィック -->
+    <!-- 桜の花弁5片 -->
+    <path d="M 0,0 Q 20,-80 0,-120 Q -20,-80 0,0 Z" fill="url(#apcb-gold)"/>
+    <path d="M 0,0 Q 20,-80 0,-120 Q -20,-80 0,0 Z" fill="url(#apcb-gold)" transform="rotate(72)"/>
+    <path d="M 0,0 Q 20,-80 0,-120 Q -20,-80 0,0 Z" fill="url(#apcb-gold)" transform="rotate(144)"/>
+    <path d="M 0,0 Q 20,-80 0,-120 Q -20,-80 0,0 Z" fill="url(#apcb-gold)" transform="rotate(216)"/>
+    <path d="M 0,0 Q 20,-80 0,-120 Q -20,-80 0,0 Z" fill="url(#apcb-gold)" transform="rotate(288)"/>
+
+    <!-- コア：特攻の覚悟を示す赤黒い核 -->
+    <circle cx="0" cy="0" r="22" fill="#0a0003" stroke="url(#cherry-blood)" stroke-width="4"/>
+    <circle cx="0" cy="0" r="8" fill="#ffffff"/>
+
+    <!-- 下部：部隊プレート -->
+    <polygon points="-240,135 240,135 210,185 -210,185" fill="#1f0208" stroke="url(#cherry-blood)" stroke-width="2"/>
+    
+    <text x="0" y="160" font-family="'Helvetica Neue', 'Arial', sans-serif" font-size="16" font-weight="900" fill="#ffffff" letter-spacing="4" text-anchor="middle">
+      大日中帝国連邦 特攻隊
+    </text>
+    <text x="0" y="177" font-family="'Courier New', monospace" font-size="9" font-weight="bold" fill="url(#apcb-gold)" letter-spacing="2" text-anchor="middle">
+      AGAINST, PERFECT CHERRY BLOSSOM
+    </text>
+  </g>
+</svg>
