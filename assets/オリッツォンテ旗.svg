@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="100%" height="100%">
+  <defs>
+    <!-- 極地の黎明・水平線を象徴するオレンジグラデーション -->
+    <linearGradient id="horizon-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2b1810"/>
+      <stop offset="35%" stop-color="#e65c00"/>
+      <stop offset="50%" stop-color="#ffb732"/>
+      <stop offset="65%" stop-color="#e65c00"/>
+      <stop offset="100%" stop-color="#2b1810"/>
+    </linearGradient>
+
+    <!-- 自警団の鋼鉄シールドグラデーション -->
+    <linearGradient id="shield-steel" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4a586e"/>
+      <stop offset="50%" stop-color="#1e2733"/>
+      <stop offset="100%" stop-color="#0f141a"/>
+    </linearGradient>
+
+    <!-- コントラスト用のゴールド -->
+    <linearGradient id="ori-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffe17d"/>
+      <stop offset="100%" stop-color="#cc8800"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景：群青の夜空と深海を思わせるダークブルー -->
+  <rect x="0" y="0" width="900" height="600" fill="#0b1017"/>
+
+  <!-- 地平線・水平線（オリッツォンテの主軸） -->
+  <rect x="0" y="285" width="900" height="30" fill="url(#horizon-glow)"/>
+  <line x1="0" y1="300" x2="900" y2="300" stroke="#ffffff" stroke-width="2" opacity="0.6"/>
+
+  <!-- 上下の細い警戒・防壁ライン -->
+  <line x1="0" y1="40" x2="900" y2="40" stroke="#ffb732" stroke-width="2" opacity="0.3"/>
+  <line x1="0" y1="560" x2="900" y2="560" stroke="#ffb732" stroke-width="2" opacity="0.3"/>
+
+  <!-- 中央エンブレムグループ -->
+  <g transform="translate(450, 300)">
+    
+    <!-- 防衛を象徴するヘキサゴン・シールド（自警団の盾） -->
+    <polygon points="0,-180 130,-90 130,90 0,180 -130,90 -130,-90" fill="url(#shield-steel)" stroke="url(#ori-gold)" stroke-width="6"/>
+    <polygon points="0,-160 115,-80 115,80 0,160 -115,80 -115,-80" fill="none" stroke="#ffb732" stroke-width="2" opacity="0.5"/>
+
+    <!-- 羅針盤・コンパス（境界線・航路を守る者たち） -->
+    <circle cx="0" cy="0" r="110" fill="none" stroke="url(#ori-gold)" stroke-width="3" stroke-dasharray="12, 6"/>
+
+    <!-- 羅針盤の針（北と南、そして水平線の交差点） -->
+    <!-- 垂直針（正義の軸） -->
+    <polygon points="0,-130 12,-30 0,-10 -12,-30" fill="url(#ori-gold)"/>
+    <polygon points="0,130 12,30 0,10 -12,30" fill="url(#ori-gold)"/>
+    
+    <!-- 水平針（地平線を割る光） -->
+    <polygon points="-130,0 -30,-12 -10,0 -30,12" fill="#ffffff"/>
+    <polygon points="130,0 30,-12 10,0 30,12" fill="#ffffff"/>
+
+    <!-- 中央の輝点（希望の光） -->
+    <circle cx="0" cy="0" r="16" fill="#0b1017" stroke="url(#ori-gold)" stroke-width="4"/>
+    <circle cx="0" cy="0" r="6" fill="#ffffff"/>
+
+    <!-- 下部のカーブテキスト (ORIZZONTE) -->
+    <path id="o-text-path" d="M -100,105 A 120,120 0 0,0 100,105" fill="none"/>
+    <text font-family="'Arial', sans-serif" font-size="16" font-weight="bold" fill="#ffb732" letter-spacing="6" text-anchor="middle">
+      <textPath href="#o-text-path" startOffset="50%">ORIZZONTE</textPath>
+    </text>
+  </g>
+</svg>

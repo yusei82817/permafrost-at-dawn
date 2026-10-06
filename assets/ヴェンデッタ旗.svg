@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="100%" height="100%">
+  <defs>
+    <!-- 漆黒の暗闇グラデーション -->
+    <linearGradient id="v-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#140505"/>
+      <stop offset="50%" stop-color="#080202"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+
+    <!-- 鮮血のレッドグラデーション -->
+    <linearGradient id="v-red" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff3333"/>
+      <stop offset="50%" stop-color="#a80000"/>
+      <stop offset="100%" stop-color="#4a0000"/>
+    </linearGradient>
+
+    <!-- 鋭利な刃のシルバーグラデーション -->
+    <linearGradient id="v-silver" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#8a99a8"/>
+      <stop offset="100%" stop-color="#3a4550"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景ベース -->
+  <rect x="0" y="0" width="900" height="600" fill="url(#v-dark)"/>
+
+  <!-- 上下の細い赤ライン（警戒・軍律帯） -->
+  <rect x="0" y="0" width="900" height="20" fill="url(#v-red)"/>
+  <rect x="0" y="580" width="900" height="20" fill="url(#v-red)"/>
+
+  <!-- 背景の大型ターゲットライン（左右に展開する暗殺網） -->
+  <line x1="0" y1="300" x2="900" y2="300" stroke="url(#v-red)" stroke-width="2" opacity="0.4"/>
+  <circle cx="450" cy="300" r="240" fill="none" stroke="url(#v-red)" stroke-width="3" stroke-dasharray="8, 12" opacity="0.6"/>
+
+  <!-- 中央エンブレムエリア -->
+  <g transform="translate(450, 300)">
+    
+    <!-- 外郭ターゲットスコープ -->
+    <circle cx="0" cy="0" r="180" fill="#0d0202" stroke="url(#v-red)" stroke-width="6"/>
+    <circle cx="0" cy="0" r="160" fill="none" stroke="url(#v-red)" stroke-width="2" stroke-dasharray="30, 10"/>
+
+    <!-- 十字照準線 -->
+    <line x1="-210" y1="0" x2="-120" y2="0" stroke="url(#v-red)" stroke-width="4"/>
+    <line x1="120" y1="0" x2="210" y2="0" stroke="url(#v-red)" stroke-width="4"/>
+    <line x1="0" y1="-210" x2="0" y2="-120" stroke="url(#v-red)" stroke-width="4"/>
+    <line x1="0" y1="120" x2="0" y2="210" stroke="url(#v-red)" stroke-width="4"/>
+
+    <!-- 「V」（Vendetta / 復讐）の刃構造 -->
+    <polygon points="0,120 -110,-90 -65,-90 0,40 65,-90 110,-90" fill="url(#v-red)"/>
+
+    <!-- 中央を垂直に貫く短剣（暗殺の刃） -->
+    <!-- 刀身 -->
+    <polygon points="0,-160 16,-20 0,90 -16,-20" fill="url(#v-silver)"/>
+    <polygon points="0,-160 0,90 -16,-20" fill="#ffffff" opacity="0.4"/> <!-- ハイライト -->
+
+    <!-- 柄・鍔 -->
+    <polygon points="-40,-20 40,-20 25,-32 -25,-32" fill="#1f1f1f" stroke="url(#v-red)" stroke-width="2"/>
+    <rect x="-8" y="-55" width="16" height="25" rx="2" fill="#333333"/>
+    <circle cx="0" cy="-62" r="9" fill="url(#v-red)"/>
+
+    <!-- 下部の組織名カーブテキスト -->
+    <path id="v-text-path" d="M -110,95 A 145,145 0 0,0 110,95" fill="none"/>
+    <text font-family="'Courier New', monospace" font-size="18" font-weight="bold" fill="#ff4d4d" letter-spacing="8" text-anchor="middle">
+      <textPath href="#v-text-path" startOffset="50%">VENDETTA</textPath>
+    </text>
+  </g>
+</svg>
