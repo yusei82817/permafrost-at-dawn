@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="100%" height="100%">
+  <defs>
+    <!-- 漆黒・重工業・重金属感のあるダークグラデーション -->
+    <linearGradient id="dark-metal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1a24"/>
+      <stop offset="50%" stop-color="#0d0d11"/>
+      <stop offset="100%" stop-color="#050508"/>
+    </linearGradient>
+
+    <!-- 鈍く輝くゴツめの重厚ゴールドグラデーション -->
+    <linearGradient id="heavy-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5d77f"/>
+      <stop offset="30%" stop-color="#c89632"/>
+      <stop offset="70%" stop-color="#8a6114"/>
+      <stop offset="100%" stop-color="#4a3205"/>
+    </linearGradient>
+
+    <!-- 補色・鉄のエッジ（重装甲ライニング） -->
+    <linearGradient id="iron-edge" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#d6e0e8"/>
+      <stop offset="50%" stop-color="#607080"/>
+      <stop offset="100%" stop-color="#2a333d"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景：漆黒のベース -->
+  <rect x="0" y="0" width="900" height="600" fill="url(#dark-metal)"/>
+
+  <!-- 上下を固めるゴールドの重装甲フレーム（ベルトチカ要素：帯・要塞） -->
+  <polygon points="0,0 900,0 900,45 850,75 50,75 0,45" fill="url(#heavy-gold)"/>
+  <polygon points="0,600 900,600 900,555 850,525 50,525 0,555" fill="url(#heavy-gold)"/>
+
+  <!-- 背景の太い斜めゴールドストライプ（軍事ライン） -->
+  <polygon points="0,120 180,0 230,0 0,150" fill="url(#heavy-gold)" opacity="0.6"/>
+  <polygon points="900,480 720,600 670,600 900,450" fill="url(#heavy-gold)" opacity="0.6"/>
+  <polygon points="0,480 180,600 230,600 0,450" fill="url(#heavy-gold)" opacity="0.6"/>
+  <polygon points="900,120 720,0 670,0 900,150" fill="url(#heavy-gold)" opacity="0.6"/>
+
+  <!-- 中央の多角形要塞シールド（鉄壁のエンブレム土台） -->
+  <g transform="translate(450, 300)">
+    <!-- 外郭装甲（8角ヘキサゴン・シールド） -->
+    <polygon points="0,-190 140,-140 190,0 140,140 0,190 -140,140 -190,0 -140,-140" fill="url(#heavy-gold)"/>
+    <polygon points="0,-175 128,-128 175,0 128,128 0,175 -128,128 -175,0 -128,-128" fill="#0d0d11"/>
+    
+    <!-- 鉄のエッジライン（メカニカル感） -->
+    <polygon points="0,-165 120,-120 165,0 120,120 0,165 -120,120 -165,0 -120,-120" fill="none" stroke="url(#iron-edge)" stroke-width="4"/>
+
+    <!-- 「バルバトス」を暗示する鋭利な悪魔/獣のツノ＆重装翼モチーフ -->
+    <!-- 中央の巨大な角・ブレード -->
+    <polygon points="0,-145 18,-60 38,10 0,-15 -38,10 -18,-60" fill="url(#heavy-gold)"/>
+    
+    <!-- 左右の鋭角な翼／ツノ（ゴツめの幾何学切り出し） -->
+    <polygon points="20,-40 110,-110 80,-20 135,-30 75,40 120,80 40,50 15,20" fill="url(#heavy-gold)"/>
+    <polygon points="-20,-40 -110,-110 -80,-20 -135,-30 -75,40 -120,80 -40,50 -15,20" fill="url(#heavy-gold)"/>
+
+    <!-- 翼のインナーカット（装甲の重なり表現） -->
+    <polygon points="30,-20 85,-75 65,-15 100,-20 60,25 30,10" fill="#0d0d11"/>
+    <polygon points="-30,-20 -85,-75 -65,-15 -100,-20 -60,25 -30,10" fill="#0d0d11"/>
+
+    <!-- 下部のコア・要塞の楔（ウェッジ） -->
+    <polygon points="0,135 45,70 0,90 -45,70" fill="url(#heavy-gold)"/>
+    <polygon points="0,50 25,10 0,25 -25,10" fill="url(#iron-edge)"/>
+
+    <!-- ビス・リベット（装甲のボルト表現：12箇所） -->
+    <circle cx="0" cy="-155" r="4" fill="url(#iron-edge)"/>
+    <circle cx="0" cy="155" r="4" fill="url(#iron-edge)"/>
+    <circle cx="-155" cy="0" r="4" fill="url(#iron-edge)"/>
+    <circle cx="155" cy="0" r="4" fill="url(#iron-edge)"/>
+    <circle cx="-110" cy="-110" r="4" fill="url(#iron-edge)"/>
+    <circle cx="110" cy="-110" r="4" fill="url(#iron-edge)"/>
+    <circle cx="-110" cy="110" r="4" fill="url(#iron-edge)"/>
+    <circle cx="110" cy="110" r="4" fill="url(#iron-edge)"/>
+  </g>
+</svg>

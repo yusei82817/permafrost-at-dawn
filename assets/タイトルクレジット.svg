@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <defs>
+    <!-- 背景：静寂な暗闇 -->
+    <radialGradient id="bg-glow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#0c1420"/>
+      <stop offset="60%" stop-color="#05080d"/>
+      <stop offset="100%" stop-color="#020305"/>
+    </radialGradient>
+
+    <!-- 発光グラデーション -->
+    <linearGradient id="aurora-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#a8e6cf"/>
+      <stop offset="80%" stop-color="#3d84a8"/>
+      <stop offset="100%" stop-color="#112d4e"/>
+    </linearGradient>
+
+    <!-- テキスト用グラデーション -->
+    <linearGradient id="text-fade" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#8a9ba8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect x="0" y="0" width="1920" height="1080" fill="url(#bg-glow)"/>
+
+  <!-- 氷晶パーティクル -->
+  <g fill="#ffffff" opacity="0.3">
+    <circle cx="300" cy="200" r="1.5"/>
+    <circle cx="1600" cy="300" r="1"/>
+    <circle cx="450" cy="800" r="2"/>
+    <circle cx="1450" cy="850" r="1.5"/>
+    <circle cx="960" cy="180" r="1"/>
+  </g>
+
+  <!-- 中央シンボル -->
+  <g transform="translate(960, 440)">
+    <circle cx="0" cy="0" r="110" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.2"/>
+    <circle cx="0" cy="0" r="100" fill="none" stroke="url(#aurora-cyan)" stroke-width="2" stroke-dasharray="6, 6" opacity="0.6"/>
+
+    <polygon points="0,-140 8,-30 0,-15 -8,-30" fill="url(#aurora-cyan)"/>
+    <polygon points="0,140 8,30 0,15 -8,30" fill="url(#aurora-cyan)"/>
+    <polygon points="-140,0 -30,-8 -15,0 -30,8" fill="url(#aurora-cyan)"/>
+    <polygon points="140,0 30,-8 15,0 30,8" fill="url(#aurora-cyan)"/>
+
+    <polygon points="-70,-70 -15,-15 0,-15 -15,0" fill="#ffffff" opacity="0.7"/>
+    <polygon points="70,-70 15,-15 0,-15 15,0" fill="#ffffff" opacity="0.7"/>
+    <polygon points="-70,70 -15,15 0,15 -15,0" fill="#ffffff" opacity="0.7"/>
+    <polygon points="70,70 15,-15 0,15 15,0" fill="#ffffff" opacity="0.7"/>
+
+    <circle cx="0" cy="0" r="6" fill="#ffffff"/>
+  </g>
+
+  <!-- クレジット表記テキスト領域 -->
+  <g text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif">
+    
+    <!-- 肩書／役職 -->
+    <text x="960" y="660" font-size="16" font-weight="400" letter-spacing="12" fill="#6c7a89">
+      ORIGINAL STORY &amp; GAME DESIGN
+    </text>
+
+    <!-- 中央仕切り線 -->
+    <line x1="880" y1="685" x2="1040" y2="685" stroke="#3d84a8" stroke-width="1" opacity="0.4"/>
+
+    <!-- 原作者名 / メインクレジット -->
+    <!-- ※「YOUR NAME HERE」の部分をお名前（ペンネーム等）に打ち替えてください -->
+    <text x="960" y="740" font-size="38" font-weight="700" letter-spacing="14" fill="url(#text-fade)">
+      Rhythmos Studio
+    </text>
+
+    <!-- 補足クレジット（サークル名やチーム名など） -->
+    <text x="960" y="785" font-size="14" font-weight="300" letter-spacing="8" fill="#52616b">
+      PRESENTED BY NOA GAMES
+    </text>
+
+    <!-- 下部：スタート指示 -->
+    <text x="960" y="940" font-size="12" font-weight="300" letter-spacing="6" fill="#3a4750">
+      PRESS ANY KEY TO START
+    </text>
+  </g>
+</svg>
