@@ -42,15 +42,40 @@ async function createScene(){
   gm.diffuseColor=new BABYLON.Color3(.18,.19,.14);
   ground.material=gm;
 
-  const grassMat=new BABYLON.StandardMaterial("grassMaterial",scene);
-  grassMat.diffuseColor=new BABYLON.Color3(.12,.18,.08);
-  for(let i=0;i<80;i++){
-    const g=BABYLON.MeshBuilder.CreateBox("grass",{width:.08,height:.8+Math.random()*.7,depth:.08},scene);
-    g.position.x=(Math.random()-.5)*30;
-    g.position.z=Math.random()*20-3;
-    g.position.y=g.scaling.y*.4;
-    g.rotation.y=Math.random()*Math.PI;
-    g.material=grassMat;
+  // 実物の草.fbxを読み込む。前景に複製して兵士視点の遮蔽物にする。
+  const grassRoot="https://raw.githubusercontent.com/yusei82817/permafrost-at-dawn/main/assets/";
+  try{
+    const result=await BABYLON.SceneLoader.ImportMeshAsync("",grassRoot,"草.fbx",scene);
+    const sourceMeshes=result.meshes.filter(m=>m instanceof BABYLON.Mesh && m.name!=="__root__");
+    if(sourceMeshes.length){
+      const sourceRoot=result.meshes[0];
+      sourceRoot.setEnabled(false);
+      for(let i=0;i<18;i++){
+        const parent=new BABYLON.TransformNode("grassCluster_"+i,scene);
+        const x=(Math.random()-.5)*18;
+        const z=Math.random()*16-4;
+        parent.position.set(x,0,z);
+        parent.rotation.y=Math.random()*Math.PI*2;
+        const s=.7+Math.random()*.7;
+        parent.scaling.set(s,s,s);
+        for(const src of sourceMeshes){
+          const clone=src.clone(src.name+"_clone_"+i,parent,true);
+          if(clone) clone.setEnabled(true);
+        }
+      }
+    }
+  }catch(error){
+    console.warn("草.fbxの読み込みに失敗しました。仮草へフォールバックします。",error);
+    const grassMat=new BABYLON.StandardMaterial("fallbackGrassMaterial",scene);
+    grassMat.diffuseColor=new BABYLON.Color3(.12,.18,.08);
+    for(let i=0;i<40;i++){
+      const g=BABYLON.MeshBuilder.CreateBox("fallbackGrass",{width:.08,height:.8+Math.random()*.7,depth:.08},scene);
+      g.position.x=(Math.random()-.5)*30;
+      g.position.z=Math.random()*20-3;
+      g.position.y=.4;
+      g.rotation.y=Math.random()*Math.PI;
+      g.material=grassMat;
+    }
   }
 
   const distant=BABYLON.MeshBuilder.CreateBox("distantObject",{width:4,height:2,depth:6},scene);
