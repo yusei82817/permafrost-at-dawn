@@ -48,6 +48,15 @@ async function createScene(){
     const result=await BABYLON.SceneLoader.ImportMeshAsync("",grassRoot,"草.fbx",scene);
     const sourceMeshes=result.meshes.filter(m=>m instanceof BABYLON.Mesh && m.name!=="__root__");
     if(sourceMeshes.length){
+      // FBX/MTLが元PCのC:/パスを参照していても、OP側からテクスチャを強制指定する。
+      const grassTexture=new BABYLON.Texture(grassRoot+"grass_green.jpg",scene);
+      grassTexture.uScale=1;
+      grassTexture.vScale=1;
+      const grassMaterial=new BABYLON.StandardMaterial("opGrassMaterial",scene);
+      grassMaterial.diffuseTexture=grassTexture;
+      grassMaterial.diffuseColor=new BABYLON.Color3(1,1,1);
+      grassMaterial.specularColor=new BABYLON.Color3(0.08,0.08,0.08);
+
       const sourceRoot=result.meshes[0];
       sourceRoot.setEnabled(false);
       for(let i=0;i<18;i++){
@@ -60,7 +69,10 @@ async function createScene(){
         parent.scaling.set(s,s,s);
         for(const src of sourceMeshes){
           const clone=src.clone(src.name+"_clone_"+i,parent,true);
-          if(clone) clone.setEnabled(true);
+          if(clone){
+            clone.material=grassMaterial;
+            clone.setEnabled(true);
+          }
         }
       }
     }
