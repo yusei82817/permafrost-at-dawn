@@ -39,7 +39,7 @@ async function createScene(){
 
   const ground=BABYLON.MeshBuilder.CreateGround("ground",{width:100,height:100},scene);
   const gm=new BABYLON.StandardMaterial("groundMaterial",scene);
-  gm.diffuseColor=new BABYLON.Color3(.18,.19,.14);
+  gm.diffuseColor=new BABYLON.Color3(.075,.085,.06);\n  gm.specularColor=new BABYLON.Color3(.015,.015,.01);\n  gm.roughness=.95;
   ground.material=gm;
 
   // 実物の草.fbxを読み込む。前景に複製して兵士視点の遮蔽物にする。
@@ -97,8 +97,8 @@ async function createScene(){
   distant.material=dm;
 
   scene.fogMode=BABYLON.Scene.FOGMODE_EXP2;
-  scene.fogDensity=.018;
-  scene.fogColor=new BABYLON.Color3(.45,.45,.40);
+  scene.fogDensity=.009;
+  scene.fogColor=new BABYLON.Color3(.16,.18,.17);\n  scene.clearColor=new BABYLON.Color4(.06,.08,.09,1);
   return scene;
 }
 
