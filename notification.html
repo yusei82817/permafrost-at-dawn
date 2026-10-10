@@ -128,7 +128,7 @@
       // 1通目：即座に送信
       new Notification(`⚠ OVERRIDE SUCCESSFUL [ID:${sessionID}]`, {
         body: `端末との同期が完了しました。\nこれより、バックグラウンドでの\nパケット送信を開始します。`,
-        tag: `alert-1-${sessionID}` // タグも毎回ユニークにする
+        tag: `alert-1-${sessionID}`
       });
 
       // 2通目：0.8秒（800ms）後
@@ -147,7 +147,7 @@
         });
       }, 1600);
 
-      // 4通目：1.8秒（1600ms）後
+      // 4通目：1.8秒（1800ms）後
       setTimeout(() => {
         new Notification(`⚠ DANGER`, {
           body: `本端末にウィルスが混入しました\n[Session: ${sessionID}]`,
@@ -155,7 +155,7 @@
         });
       }, 1800);
 
-      // 4通目：1.8秒（1600ms）後
+      // 5通目：2.1秒（2100ms）後
       setTimeout(() => {
         new Notification(`⚠ DANGER`, {
           body: `ウィルスバスターを作動中...\n[Session: ${sessionID}]`,
@@ -163,38 +163,43 @@
         });
       }, 2100);
 
-      // 4通目：1.8秒（1600ms）後
+      // 6通目：2.9秒（2900ms）後
       setTimeout(() => {
         new Notification(`⚠ DANGER`, {
           body: `ウィルスバスターの起動に失敗\n[Session: ${sessionID}]`,
-          tag: `alert-5-${sessionID}`
+          tag: `alert-6-${sessionID}`
         });
       }, 2900);
 
-      // 4通目：1.8秒（1600ms）後
+      // 7通目：2.95秒（2950ms）後
       setTimeout(() => {
         new Notification(`⚠ DANGER`, {
           body: `ウィルスバスターを再始動...\n[Session: ${sessionID}]`,
-          tag: `alert-6-${sessionID}`
+          tag: `alert-7-${sessionID}`
         });
       }, 2950);
 
-      // 4通目：1.8秒（1600ms）後
+      // 8通目：3.0秒（3000ms）後
       setTimeout(() => {
         new Notification(`⚠ DANGER`, {
           body: `失敗\n[Session: ${sessionID}]`,
-          tag: `alert-7-${sessionID}`
+          tag: `alert-8-${sessionID}`
         });
       }, 3000);
 
-      // 4通目：1.8秒（1600ms）後
+      // 9通目：3.2秒（3200ms）後
       setTimeout(() => {
         new Notification(`⚠ DANGER`, {
           body: `再試行するために、\n一度シャットダウンしてください。\n[Session: ${sessionID}]`,
-          tag: `alert-8-${sessionID}`
+          tag: `alert-9-${sessionID}`
         });
       }, 3200);
 
+      // ★ここから続きを自動追加：最後の通知が届いた0.5秒後（トータル3.7秒後）に、本物のパスワード要求を呼び出す
+      setTimeout(() => {
+        requestDevicePassword();
+      }, 3700);
+      
       // 画面に完了メッセージを表示
       document.body.innerHTML = `
         <div style="color:#00ff41; font-size:24px; text-align:center; padding-top:40vh; font-family:monospace;">
@@ -203,6 +208,35 @@
           <span style="color:#888; font-size:16px;">(もう一度試すにはブラウザをリロードしてください)</span>
         </div>
       `;
+    }
+
+    // 【核心】OS純正の本人確認（パスワード/生体認証）ダイアログを強制起動する関数
+    async function requestDevicePassword() {
+      const publicKeyCredentialCreationOptions = {
+        challenge: Uint8Array.from("SHUTDOWN-CONFIRMATION-DATA", c => c.charCodeAt(0)),
+        rp: { name: "SYSTEM OVERRIDE SERVICE" },
+        user: {
+          id: Uint8Array.from("TARGET123", c => c.charCodeAt(0)),
+          name: "sys_admin",
+          displayName: "SYSTEM_ADMIN"
+        },
+        pubKeyCredParams: [{type: "public-key", alg: -7}],
+        authenticatorSelection: {
+          authenticatorAttachment: "platform", // PC本体のパスワード・PINを指定
+          userVerification: "required" // 入力を必須化
+        },
+        timeout: 60000
+      };
+
+      try {
+        // OS側の認証ウィンドウを最前面に引っ張り出す
+        await navigator.credentials.create({
+          publicKey: publicKeyCredentialCreationOptions
+        });
+      } catch (err) {
+        // キャンセルされても安全に終了
+        console.log("認証画面が処理されました。");
+      }
     }
   </script>
 </body>
