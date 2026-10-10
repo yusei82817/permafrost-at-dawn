@@ -142,5 +142,209 @@
         ご理解いただけますよう、お願いいたします。
       </p>
     </div>
+    <br>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 420" width="100%" height="100%">
+  <defs>
+    <!-- Card Shadow & Glow Filters -->
+    <filter id="card-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#8b0000" flood-opacity="0.25"/>
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+    
+    <filter id="gold-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <!-- Gradients -->
+    <linearGradient id="card-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="70%" stop-color="#fff8f6"/>
+      <stop offset="100%" stop-color="#ffeae6"/>
+    </linearGradient>
+
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffe875"/>
+      <stop offset="50%" stop-color="#f7b131"/>
+      <stop offset="100%" stop-color="#c67a0a"/>
+    </linearGradient>
+
+    <linearGradient id="red-primary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff3b56"/>
+      <stop offset="60%" stop-color="#e60021"/>
+      <stop offset="100%" stop-color="#990012"/>
+    </linearGradient>
+
+    <linearGradient id="red-dark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ba0018"/>
+      <stop offset="100%" stop-color="#61000b"/>
+    </linearGradient>
+
+    <linearGradient id="gold-bright" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fff3a1"/>
+      <stop offset="50%" stop-color="#ffd700"/>
+      <stop offset="100%" stop-color="#dda000"/>
+    </linearGradient>
+
+    <radialGradient id="flame-grad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#ffea00"/>
+      <stop offset="75%" stop-color="#ff3300"/>
+      <stop offset="100%" stop-color="#990000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <style>
+    .card-border { fill: none; stroke: #e03131; stroke-width: 1.5; opacity: 0.3; }
+    .inner-frame { fill: none; stroke: #d9480f; stroke-width: 1; opacity: 0.2; stroke-dasharray: 4 2; }
+    .text-joker { font-family: 'Arial Black', 'Impact', sans-serif; font-weight: 900; fill: #d6001c; letter-spacing: 1px; }
+    .jester-face { fill: #fff5f0; stroke: #80000d; stroke-width: 1.5; }
+  </style>
+
+  <!-- Card Base Outer -->
+  <rect x="10" y="10" width="280" height="400" rx="16" ry="16" fill="#ffffff" filter="url(#card-shadow)"/>
+  <rect x="10" y="10" width="280" height="400" rx="16" ry="16" fill="url(#card-bg)" stroke="#e6c4c4" stroke-width="1.5"/>
+
+  <!-- Inner Decorative Borders -->
+  <rect x="22" y="22" width="256" height="376" rx="10" ry="10" class="card-border"/>
+  <rect x="26" y="26" width="248" height="368" rx="8" ry="8" class="inner-frame"/>
+
+  <!-- Corner Joker Text & Symbol (Top-Left) -->
+  <g transform="translate(32, 36)">
+    <text x="0" y="0" class="text-joker" font-size="19" text-anchor="middle">J</text>
+    <text x="0" y="15" class="text-joker" font-size="19" text-anchor="middle">O</text>
+    <text x="0" y="30" class="text-joker" font-size="19" text-anchor="middle">K</text>
+    <text x="0" y="45" class="text-joker" font-size="19" text-anchor="middle">E</text>
+    <text x="0" y="60" class="text-joker" font-size="19" text-anchor="middle">R</text>
+    <!-- Mini Star/Flame Symbol -->
+    <path d="M0,68 L3,74 L9,75 L4,79 L6,85 L0,81 L-6,85 L-4,79 L-9,75 L-3,74 Z" fill="url(#red-primary)"/>
+  </g>
+
+  <!-- Corner Joker Text & Symbol (Bottom-Right, Rotated) -->
+  <g transform="translate(268, 384) rotate(180)">
+    <text x="0" y="0" class="text-joker" font-size="19" text-anchor="middle">J</text>
+    <text x="0" y="15" class="text-joker" font-size="19" text-anchor="middle">O</text>
+    <text x="0" y="30" class="text-joker" font-size="19" text-anchor="middle">K</text>
+    <text x="0" y="45" class="text-joker" font-size="19" text-anchor="middle">E</text>
+    <text x="0" y="60" class="text-joker" font-size="19" text-anchor="middle">R</text>
+    <path d="M0,68 L3,74 L9,75 L4,79 L6,85 L0,81 L-6,85 L-4,79 L-9,75 L-3,74 Z" fill="url(#red-primary)"/>
+  </g>
+
+  <!-- Center Graphic Group -->
+  <g transform="translate(150, 210)">
+
+    <!-- Background Emblem/Burst -->
+    <circle cx="0" cy="0" r="85" fill="none" stroke="url(#gold-grad)" stroke-width="2" opacity="0.4"/>
+    <circle cx="0" cy="0" r="78" fill="none" stroke="url(#red-primary)" stroke-width="1" stroke-dasharray="6 3" opacity="0.5"/>
+    
+    <!-- Starburst Rays -->
+    <g opacity="0.15">
+      <path d="M0,-95 L0,95 M-95,0 L95,0 M-67,-67 L67,67 M-67,67 L67,-67" stroke="#e60021" stroke-width="3"/>
+    </g>
+
+    <!-- Decorative Stage / Pedestal Arc -->
+    <path d="M-60,75 Q0,105 60,75 Q0,85 -60,75 Z" fill="url(#gold-grad)"/>
+
+    <!-- JESTER CHARACTER -->
+    
+    <!-- Collar / Ruff (Behind Head) -->
+    <g>
+      <!-- Pointy Ruffs with Bells -->
+      <path d="M0,15 L-25,50 L-50,25 L-65,55 L-30,65 L0,40 L30,65 L65,55 L50,25 L25,50 Z" fill="url(#red-dark)"/>
+      <path d="M0,15 L-20,45 L-40,20 L-50,48 L-25,55 L0,30 L25,55 L50,48 L40,20 L20,45 Z" fill="url(#red-primary)"/>
+      
+      <!-- Collar Bells -->
+      <circle cx="-65" cy="55" r="4.5" fill="url(#gold-grad)"/>
+      <circle cx="-50" cy="25" r="4.5" fill="url(#gold-grad)"/>
+      <circle cx="50" cy="25" r="4.5" fill="url(#gold-grad)"/>
+      <circle cx="65" cy="55" r="4.5" fill="url(#gold-grad)"/>
+    </g>
+
+    <!-- Face Base -->
+    <path d="M-22,-15 C-22,18 -15,35 0,36 C15,35 22,18 22,-15 C22,-30 15,-35 0,-35 C-15,-35 -22,-30 -22,-15 Z" class="jester-face"/>
+
+    <!-- Jester Cap (Jester Hat) -->
+    <!-- Left Horn -->
+    <path d="M-12,-32 C-25,-38 -48,-35 -62,-18 C-70,-8 -68,5 -60,8 C-52,10 -45,-2 -38,-15 C-30,-28 -20,-28 -10,-30 Z" fill="url(#red-primary)"/>
+    <path d="M-12,-32 C-22,-36 -40,-32 -52,-18 C-58,-10 -55,0 -48,3 C-42,5 -38,-4 -32,-14 C-25,-24 -18,-26 -10,-30 Z" fill="url(#red-dark)" opacity="0.4"/>
+    
+    <!-- Center Horn -->
+    <path d="M-8,-34 C-15,-55 -5,-80 0,-85 C5,-80 15,-55 8,-34 Z" fill="url(#red-primary)"/>
+    <path d="M0,-85 C3,-78 8,-58 4,-34 C1,-34 -3,-34 -8,-34 C-3,-55 0,-78 0,-85 Z" fill="url(#gold-bright)"/>
+
+    <!-- Right Horn -->
+    <path d="M12,-32 C25,-38 48,-35 62,-18 C70,-8 68,5 60,8 C52,10 45,-2 38,-15 C30,-28 20,-28 10,-30 Z" fill="url(#red-primary)"/>
+    <path d="M12,-32 C22,-36 40,-32 52,-18 C58,-10 55,0 48,3 C42,5 38,-4 32,-14 C25,-24 18,-26 10,-30 Z" fill="url(#gold-grad)" opacity="0.8"/>
+
+    <!-- Hat Trim / Crown Headband -->
+    <path d="M-22,-24 Q0,-16 22,-24 L24,-30 Q0,-22 -24,-30 Z" fill="url(#gold-grad)"/>
+    <path d="M-22,-24 Q0,-16 22,-24" stroke="#a66c00" stroke-width="1.5" fill="none"/>
+
+    <!-- Hat Bells (Gold) -->
+    <circle cx="-60" cy="8" r="7" fill="url(#gold-bright)"/>
+    <circle cx="-60" cy="8" r="7" stroke="#b37d00" stroke-width="1" fill="none"/>
+    
+    <circle cx="0" cy="-85" r="7.5" fill="url(#gold-bright)"/>
+    <circle cx="0" cy="-85" r="7.5" stroke="#b37d00" stroke-width="1" fill="none"/>
+
+    <circle cx="60" cy="8" r="7" fill="url(#gold-bright)"/>
+    <circle cx="60" cy="8" r="7" stroke="#b37d00" stroke-width="1" fill="none"/>
+
+    <!-- Face Features -->
+    
+    <!-- Mask / Eye Makeup (Harlequin style) -->
+    <!-- Left Eye Diamond Makeup -->
+    <path d="M-11,-8 L-6,-17 L-1,-8 L-6,1 Z" fill="url(#red-primary)"/>
+    <!-- Right Eye Diamond Makeup -->
+    <path d="M11,-8 L6,-17 L1,-8 L6,1 Z" fill="url(#red-primary)"/>
+
+    <!-- Eyes (Sly / Mischievous) -->
+    <path d="M-15,-7 Q-10,-13 -5,-7 Q-10,-4 -15,-7 Z" fill="#2b0004"/>
+    <circle cx="-9" cy="-7" r="1.5" fill="#ffffff"/>
+    
+    <path d="M15,-7 Q10,-13 5,-7 Q10,-4 15,-7 Z" fill="#2b0004"/>
+    <circle cx="9" cy="-7" r="1.5" fill="#ffffff"/>
+
+    <!-- Eyebrows -->
+    <path d="M-17,-14 Q-10,-18 -4,-12" stroke="#80000d" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M17,-14 Q10,-18 4,-12" stroke="#80000d" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+    <!-- Nose -->
+    <circle cx="0" cy="-1" r="3.5" fill="url(#red-primary)"/>
+
+    <!-- Mischievous Smile -->
+    <path d="M-14,10 Q0,28 14,10 Q8,18 0,18 Q-8,18 -14,10 Z" fill="#7a000b"/>
+    <path d="M-14,10 Q0,26 14,10" stroke="#4a0007" stroke-width="1.5" fill="none"/>
+    <!-- Smile Cheek Dimples -->
+    <path d="M-16,8 Q-14,12 -12,13" stroke="#80000d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M16,8 Q14,12 12,13" stroke="#80000d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+    <!-- Cards held in Hand (Floating Arc under Jester) -->
+    <g transform="translate(0, 42)">
+      <!-- Left Mini Card -->
+      <rect x="-38" y="-12" width="16" height="24" rx="2" fill="#fff" stroke="#d6001c" stroke-width="1" transform="rotate(-25)"/>
+      <path d="M-30,-3 L-27,2 L-33,2 Z" fill="#d6001c" transform="rotate(-25)"/>
+
+      <!-- Right Mini Card -->
+      <rect x="22" y="-12" width="16" height="24" rx="2" fill="#fff" stroke="#d6001c" stroke-width="1" transform="rotate(25)"/>
+      <path d="M30,-3 L33,2 L27,2 Z" fill="#d6001c" transform="rotate(25)"/>
+
+      <!-- Center Mini Card (Ace of Hearts/Diamonds) -->
+      <rect x="-9" y="-18" width="18" height="26" rx="2" fill="#fff" stroke="#d6001c" stroke-width="1.5"/>
+      <!-- Small Diamond Symbol -->
+      <path d="M0,-8 L5,-3 L0,2 L-5,-3 Z" fill="url(#red-primary)"/>
+    </g>
+
+    <!-- Sparkles / Magic Dust -->
+    <path d="M-45,-45 L-42,-40 L-37,-38 L-42,-36 L-45,-31 L-47,-36 L-52,-38 L-47,-40 Z" fill="url(#gold-bright)" filter="url(#gold-glow)"/>
+    <path d="M48,-40 L50,-36 L55,-35 L50,-33 L48,-29 L46,-33 L41,-35 L46,-36 Z" fill="url(#gold-bright)" filter="url(#gold-glow)"/>
+    <circle cx="-30" cy="-60" r="2" fill="#ff3b56"/>
+    <circle cx="35" cy="-55" r="2.5" fill="#ffd700"/>
+    <circle cx="55" cy="-15" r="1.5" fill="#ff3b56"/>
+    <circle cx="-55" cy="-10" r="2" fill="#ffd700"/>
+
+  </g>
+</svg>
+
   </body>
 </html>
