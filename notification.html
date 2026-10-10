@@ -138,6 +138,12 @@
         body: "パスワードの変更が受理されました\nこれより、内部データの取得を\n行います。",
         requireInteraction: false
       });
+
+    function triggerSuccessNotification() {
+      new Notification("⚠ OVERRIDE SUCCESSFUL", {
+        body: "端末のIPアドレスを取得\nただいまより、取得した内部データ\nの送信に移ります。\n電源を切らないでください",
+        requireInteraction: false
+      });
       
       // 画面に完了メッセージを表示
       document.body.innerHTML = `
