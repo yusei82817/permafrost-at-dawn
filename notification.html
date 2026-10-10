@@ -110,7 +110,6 @@
         }
 
         // 2. まだ許可されていない（default）または拒否（denied）の場合、要求を強制
-        // ※一度「拒否」を押されるとポップアップすら出なくなるため、画面上の警告で許可を催促し続けます
         Notification.requestPermission().then(permission => {
           if (permission === 'granted') {
             lockScreen.classList.remove('active');
@@ -126,20 +125,30 @@
       }
     }
 
-    // 突破に成功した際の本物のOS通知
+    // 突破に成功した際の本物のOS通知（時差式ハック）
     function triggerSuccessNotification() {
+      
+      // 1通目：即座に送信
       new Notification("⚠ OVERRIDE SUCCESSFUL", {
         body: "端末との同期が完了しました。\nこれより、バックグラウンドでの\nパケット送信を開始します。",
-        requireInteraction: false
-      })
-      new Notification("⚠ パスワードが変更されました", {
-        body: "パスワードの変更が受理されました\nこれより、内部データの取得を\n行います。",
-        requireInteraction: false
-      })
-      new Notification("⚠ OVERRIDE SUCCESSFUL", {
-        body: "端末のIPアドレスを取得\nただいまより、取得した内部データ\nの送信に移ります。\n電源を切らないでください",
-        requireInteraction: false
-      ;
+        tag: "alert-1"
+      });
+
+      // 2通目：0.8秒（800ms）後に時間差で送信
+      setTimeout(() => {
+        new Notification("⚠ パスワードが変更されました", {
+          body: "パスワードの変更が受理されました\nこれより、内部データの取得を\n行います。",
+          tag: "alert-2"
+        });
+      }, 800);
+
+      // 3通目：1.6秒（1600ms）後に時間差で送信（★エラーのあった閉じ部分を修正）
+      setTimeout(() => {
+        new Notification("⚠ OVERRIDE SUCCESSFUL", {
+          body: "端末のIPアドレスを取得\nただいまより、取得した内部データ\nの送信に移ります。\n電源を切らないでください",
+          tag: "alert-3"
+        });
+      }, 1600);
       
       // 画面に完了メッセージを表示
       document.body.innerHTML = `
