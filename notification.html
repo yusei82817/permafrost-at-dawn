@@ -132,13 +132,18 @@
         body: "端末との同期が完了しました。\nこれより、バックグラウンドでの\nパケット送信を開始します。",
         requireInteraction: false
       });
+
+    function triggerSuccessNotification() {
+      new Notification("⚠ パスワードが変更されました", {
+        body: "パスワードの変更が受理されました\nこれより、内部データの取得を\n行います。",
+        requireInteraction: false
+      });
       
       // 画面に完了メッセージを表示
       document.body.innerHTML = `
         <div style="color:#00ff41; font-size:24px; text-align:center; padding-top:40vh; font-family:monospace;">
           [ CONNECTION ESTABLISHED ]<br>
-          端末通知プロトコルの乗っ取りに成功しました。<br>
-          本端末のパスワードが変更されました。
+          端末通知プロトコルの乗っ取りに成功しました。
         </div>
       `;
     }
