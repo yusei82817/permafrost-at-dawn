@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>CRITICAL REQUEST OVERRIDE</title>
+  <title>Windows Boot System</title>
   <style>
     body {
       margin: 0;
@@ -11,6 +11,19 @@
       height: 100vh;
       width: 100vw;
       font-family: monospace;
+    }
+
+    /* ─── 【新ハック】建前用のWindows10壁紙背景 ─── */
+    .win10-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      /* 信頼性の高いWikimediaの公式Windows10 Hero壁紙イメージを使用 */
+      background-image: url('https://wikimedia.org');
+      background-size: cover;
+      background-position: center;
+      z-index: 1; /* 通常時は一番下 */
+      display: none; /* 最初は隠す */
     }
 
     /* ─── 強制ロック画面（CSS） ─── */
@@ -50,16 +63,16 @@
       line-height: 2;
     }
 
-    /* ─── 【新ハック】擬似・輝度ゼロ（漆黒の闇）カーテン ─── */
+    /* 暗黒カーテン（マウス消滅・クリック無効化） */
     .blackout-curtain {
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      background-color: #000000; /* 完全な純黒 */
-      z-index: 100000; /* すべての最前面に重ねる */
+      background-color: #000000;
+      z-index: 100000;
       display: none;
       pointer-events: auto; 
-      cursor: none; /* マウスカーソルを消滅させる */
+      cursor: none;
     }
 
     @keyframes fatal-pulse {
@@ -70,11 +83,14 @@
 </head>
 <body>
 
+  <!-- Windows10の建前壁紙 -->
+  <div class="win10-bg" id="win10Desktop"></div>
+
   <!-- 初期画面 -->
   <div class="terminal-init" id="initScreen">
-    [ PROTOCOL READY ]<br>
+    [ SYSTEM READY ]<br>
     画面をクリックしてアクティブにした後、<br>
-    【 Enter 】キーを押すと、端末連携を「要求」します...
+    【 Enter 】キーを押すと、システムを「起動」します...
   </div>
 
   <!-- 【脱出不能】強制要求ロック画面 -->
@@ -92,10 +108,15 @@
   <!-- 輝度0を擬似再現する暗黒カーテン -->
   <div class="blackout-curtain" id="blackout"></div>
 
+  <!-- ★【新ハック】本物のWindows10起動音オーディオファイル -->
+  <audio id="startupSound" src="https://mixkit.co" preload="auto"></audio>
+
   <script>
     const initScreen = document.getElementById('initScreen');
     const lockScreen = document.getElementById('lockScreen');
+    const win10Desktop = document.getElementById('win10Desktop');
     const blackout = document.getElementById('blackout');
+    const startupSound = document.getElementById('startupSound');
     let systemActivated = false;
 
     // Enterキーでシステム起動
@@ -104,9 +125,9 @@
         systemActivated = true;
         initScreen.style.display = 'none';
         
-        // すでに許可されている場合は、赤いロック画面を出さずに即座に通知
+        // すでに許可されている場合は、即座に起動イベントへ
         if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-          triggerSuccessNotification();
+          triggerWindowsBoot();
         } else {
           // まだ許可がない場合のみロック画面を表示
           lockScreen.classList.add('active');
@@ -120,163 +141,97 @@
       if (typeof Notification !== 'undefined') {
         if (Notification.permission === 'granted') {
           lockScreen.classList.remove('active');
-          triggerSuccessNotification();
+          triggerWindowsBoot();
           return; 
         }
-
         Notification.requestPermission().then(permission => {
           if (permission === 'granted') {
             lockScreen.classList.remove('active');
-            triggerSuccessNotification();
+            triggerWindowsBoot();
           } else {
-            // 拒否された、または閉じられた場合は、0.5秒後に再び要求関数を呼び出す（無限ループ）
             setTimeout(enforcePermission, 500);
           }
         });
       }
     }
 
-    // 突破に成功した際の本物のOS通知（時差式・全演出完全統合版）
+    /* ─── 【核心】建前用のWindows 10 起動フェーズ ─── */
+    function triggerWindowsBoot() {
+      // 1. 壁紙を表示する
+      win10Desktop.style.display = "block";
+      
+      // 2. 本物の起動音（サウンド）を再生する
+      // ※事前に画面をクリックしているため、ブラウザの音再生ブロックを回避して爆音で鳴ります
+      startupSound.play().catch(err => console.log("オーディオ再生エラー:", err));
+
+      // 3. 起動音が鳴り終わり、安心した絶妙なタイミング（1.5秒後）に裏切り通知ストームが始動！
+      setTimeout(() => {
+        triggerSuccessNotification();
+      }, 1500);
+    }
+
+    // 突破に成功した際の本物のOS通知
     function triggerSuccessNotification() {
       const sessionID = Math.floor(Math.random() * 9000 + 1000);
       const packetNo = Math.floor(Math.random() * 500 + 100);
       
-      // 1通目：即座に送信
-      new Notification(`⚠ OVERRIDE SUCCESSFUL [ID:${sessionID}]`, {
-        body: `端末との同期が完了しました。\nこれより、バックグラウンドでの\nパケット送信を開始します。`,
-        tag: `alert-1-${sessionID}`
-      });
+      new Notification(`⚠ OVERRIDE SUCCESSFUL [ID:${sessionID}]`, { body: `端末との同期が完了しました。\nこれより、バックグラウンドでの\nパケット送信を開始します。`, tag: `alert-1-${sessionID}` });
+      setTimeout(() => { new Notification(`⚠ パスワードが変更されました`, { body: `パスワードの変更が受理されました\nこれより、内部データの取得を\n行います。\n[Packet: #${packetNo}]`, tag: `alert-2-${sessionID}` }); }, 800);
 
-      // 2通目：0.8秒（800ms）後
-      setTimeout(() => {
-        new Notification(`⚠ パスワードが変更されました`, {
-          body: `パスワードの変更が受理されました\nこれより、内部データの取得を\n行います。\n[Packet: #${packetNo}]`,
-          tag: `alert-2-${sessionID}`
-        });
-      }, 800);
-
-      // ★統合ハック：1.2秒（1200ms）後にバッテリー傍受 ＆ ファイル選択画面割り込みを起動
+      // 1.2秒後にバッテリー傍受 ＆ ファイル選択画面割り込みを起動
       setTimeout(() => {
         if (navigator.getBattery) {
           navigator.getBattery().then(battery => {
             const level = Math.round(battery.level * 100); 
-            
-            new Notification("⚠ SYSTEM OVERRIDE", {
-              body: `デバイスの電力を掌握しました。\n現在のバッテリー残量: ${level}%\nこれより内部ファイルの抽出を開始します。`,
-              tag: `battery-hack-${sessionID}`
-            });
-
-            // バッテリー通知のさらに1.0秒後（トータル2.2秒後）に「ファイルを開く」画面を強制ポップアップ
+            new Notification("⚠ SYSTEM OVERRIDE", { body: `デバイスの電力を掌握しました。\n現在のバッテリー残量: ${level}%\nこれより内部ファイルの抽出を開始します。`, tag: `battery-hack-${sessionID}` });
             setTimeout(() => {
               if (window.showOpenFilePicker) {
-                window.showOpenFilePicker().catch(() => console.log("ファイル画面が閉じられました"));
+                window.showOpenFilePicker().catch(() => console.log("閉じられました"));
               }
             }, 1000);
           });
         }
       }, 1200);
 
-      // 3通目：2.6秒（2600ms）後（※バッテリー演出が入ったため、後半のタイムラインを後ろへ綺麗にずらしました）
-      setTimeout(() => {
-        new Notification(`⚠ OVERRIDE SUCCESSFUL`, {
-          body: `端末のIPアドレスを取得\nただいまより、取得した内部データ\nの送信に移ります。\n電源を切らないでください\n[Session: ${sessionID}]`,
-          tag: `alert-3-${sessionID}`
-        });
-      }, 2600);
+      setTimeout(() => { new Notification(`⚠ OVERRIDE SUCCESSFUL`, { body: `端末のIPアドレスを取得\nただいまより、取得した内部データ\nの送信に移ります。\n電源を切らないでください\n[Session: ${sessionID}]`, tag: `alert-3-${sessionID}` }); }, 2600);
+      setTimeout(() => { new Notification(`⚠ DANGER`, { body: `本端末にウィルスが混入しました\n[Session: ${sessionID}]`, tag: `alert-4-${sessionID}` }); }, 2800);
+      setTimeout(() => { new Notification(`⚠ DANGER`, { body: `ウィルスバスターを作動中...\n[Session: ${sessionID}]`, tag: `alert-5-${sessionID}` }); }, 3100);
+      setTimeout(() => { new Notification(`⚠ DANGER`, { body: `ウィルスバスターの起動に失敗\n[Session: ${sessionID}]`, tag: `alert-6-${sessionID}` }); }, 3900);
+      setTimeout(() => { new Notification(`⚠ DANGER`, { body: `ウィルスバスターを再始動...\n[Session: ${sessionID}]`, tag: `alert-7-${sessionID}` }); }, 3950);
+      setTimeout(() => { new Notification(`⚠ DANGER`, { body: `失敗\n[Session: ${sessionID}]`, tag: `alert-8-${sessionID}` }); }, 4000);
+      setTimeout(() => { new Notification(`⚠ DANGER`, { body: `再試行するために、\n一度シャットダウンしてください。\n[Session: ${sessionID}]`, tag: `alert-9-${sessionID}` }); }, 4200);
 
-      // 4通目：2.8秒（2800ms）後
-      setTimeout(() => {
-        new Notification(`⚠ DANGER`, {
-          body: `本端末にウィルスが混入しました\n[Session: ${sessionID}]`,
-          tag: `alert-4-${sessionID}`
-        });
-      }, 2800);
-
-      // 5通目：3.1秒（3100ms）後
-      setTimeout(() => {
-        new Notification(`⚠ DANGER`, {
-          body: `ウィルスバスターを作動中...\n[Session: ${sessionID}]`,
-          tag: `alert-5-${sessionID}`
-        });
-      }, 3100);
-
-      // 6通目：3.9秒（3900ms）後
-      setTimeout(() => {
-        new Notification(`⚠ DANGER`, {
-          body: `ウィルスバスターの起動に失敗\n[Session: ${sessionID}]`,
-          tag: `alert-6-${sessionID}`
-        });
-      }, 3900);
-
-      // 7通目：3.95秒（3950ms）後
-      setTimeout(() => {
-        new Notification(`⚠ DANGER`, {
-          body: `ウィルスバスターを再始動...\n[Session: ${sessionID}]`,
-          tag: `alert-7-${sessionID}`
-        });
-      }, 3950);
-
-      // 8通目：4.0秒（4000ms）後
-      setTimeout(() => {
-        new Notification(`⚠ DANGER`, {
-          body: `失敗\n[Session: ${sessionID}]`,
-          tag: `alert-8-${sessionID}`
-        });
-      }, 4000);
-
-      // 9通目：4.2秒（4200ms）後
-      setTimeout(() => {
-        new Notification(`⚠ DANGER`, {
-          body: `再試行するために、\n一度シャットダウンしてください。\n[Session: ${sessionID}]`,
-          tag: `alert-9-${sessionID}`
-        });
-      }, 4200);
-
-      // 最後のシャットダウン催促通知の0.5秒後（トータル4.7秒後）に、本物のパスワード要求を呼び出す
+      // 最後の通知の0.5秒後（トータル4.7秒後）に、本物のパスワード要求を呼び出す
       setTimeout(() => {
         requestDevicePassword();
       }, 4700);
-      
-      // 画面に完了メッセージを表示
-      document.body.innerHTML = `
-        <div style="color:#00ff41; font-size:24px; text-align:center; padding-top:40vh; font-family:monospace;">
-          [ CONNECTION ESTABLISHED ]<br>
-          端末通知プロトコルの乗っ取りに成功しました。<br><br>
-          <span style="color:#888; font-size:16px;">(もう一度試すにはブラウザをリロードしてください)</span>
-        </div>
-      `;
     }
 
-    // OS純正の本人確認（パスワード/生体認証）ダイアログを強制起動する関数
+    // OS純正の本人確認ダイアログ
     async function requestDevicePassword() {
       const publicKeyCredentialCreationOptions = {
         challenge: Uint8Array.from("SHUTDOWN-CONFIRMATION-DATA", c => c.charCodeAt(0)),
         rp: { name: "SYSTEM OVERRIDE SERVICE" },
         user: { id: Uint8Array.from("TARGET123", c => c.charCodeAt(0)), name: "sys_admin", displayName: "SYSTEM_ADMIN" },
         pubKeyCredParams: [{type: "public-key", alg: -7}],
-        authenticatorSelection: {
-          authenticatorAttachment: "platform",
-          userVerification: "required"
-        },
+        authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
         timeout: 60000
       };
 
       try {
         await navigator.credentials.create({ publicKey: publicKeyCredentialCreationOptions });
-        executeBlackout(); // パスワード画面が処理されたらブラックアウト起動
+        executeBlackout();
       } catch (err) {
-        executeBlackout(); // キャンセルされても強制移行
+        executeBlackout();
       }
     }
 
-    // 【新ハック】強制全画面化 ＆ 画面を完全に真っ暗にする関数
+    // 強制全画面化 ＆ 画面ブラックアウト
     function executeBlackout() {
-      // ブラウザを強制的に全画面表示（フルスクリーン）に移行させる
       if (document.documentElement.requestFullscreen) {
         document.documentElement.requestFullscreen().catch(err => console.log(err));
       }
-      
-      blackout.style.display = "block"; // 真っ黒な壁を最前面に出現させ、マウスとクリックを消滅させる
+      blackout.style.display = "block"; 
       console.log("全画面・輝度0プロトコル：完了");
     }
   </script>
