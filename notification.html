@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>CRITICAL REQUEST OVERRIDE</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      font-family: monospace;
+    }
+
+    /* ─── 強制ロック画面（CSS） ─── */
+    .lock-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background-color: #550000; /* 不気味なダークレッド */
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      visibility: hidden; /* 最初は隠しておく */
+    }
+
+    /* 画面全体を警告色に変えるアクティブクラス */
+    .lock-overlay.active {
+      visibility: visible;
+      animation: fatal-pulse 1s infinite alternate ease-in-out; /* じわじわと赤く光る（安全） */
+    }
+
+    /* ご指定のpタグ（pre-lineによる恐怖演出の改行を維持） */
+    .lock-overlay p {
+      white-space: pre-line;
+      color: #ff3333;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+      line-height: 1.8;
+      letter-spacing: 2px;
+      text-shadow: 0 0 15px #ff0000;
+    }
+
+    /* 起動前の待機画面 */
+    .terminal-init {
+      color: #00ff41;
+      font-size: 18px;
+      padding: 40px;
+      text-align: center;
+      line-height: 2;
+    }
+
+    @keyframes fatal-pulse {
+      0% { background-color: #200000; }
+      100% { background-color: #600000; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 初期画面 -->
+  <div class="terminal-init" id="initScreen">
+    [ PROTOCOL READY ]<br>
+    画面をクリックしてアクティブにした後、<br>
+    【 Enter 】キーを押すと、端末連携を「要求」します...
+  </div>
+
+  <!-- 【脱出不能】強制要求ロック画面 -->
+  <div class="lock-overlay" id="lockScreen">
+    <p>🚨 ── [ CRITICAL REQUIREMENT ] ── 🚨
+    
+    端末へのシグナル送信許可が確認できません。
+    
+    ブラウザ上部に表示されている「通知の許可」を
+    承認するまで、この端末ロックは解除されません。
+    
+    [ 待機中... ]</p>
+  </div>
+
+  <script>
+    const initScreen = document.getElementById('initScreen');
+    const lockScreen = document.getElementById('lockScreen');
+    let systemActivated = false;
+
+    // Enterキーでシステム起動
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter' && !systemActivated) {
+        systemActivated = true;
+        initScreen.style.display = 'none';
+        lockScreen.classList.add('active'); // 画面を赤くロック
+        
+        // 無限要求プロトコルの開始
+        enforcePermission();
+      }
+    });
+
+    // 【核心】許可が取れるまで絶対に許さない無限ループ関数
+    function enforcePermission() {
+      if (typeof Notification !== 'undefined') {
+        
+        // 1. 現在のステータスを確認
+        if (Notification.permission === 'granted') {
+          // 許可されたらロック解除！本物の通知を撃ち込む
+          lockScreen.classList.remove('active');
+          triggerSuccessNotification();
+          return; 
+        }
+
+        // 2. まだ許可されていない（default）または拒否（denied）の場合、要求を強制
+        // ※一度「拒否」を押されるとポップアップすら出なくなるため、画面上の警告で許可を催促し続けます
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            lockScreen.classList.remove('active');
+            triggerSuccessNotification();
+          } else {
+            // 拒否された、または閉じられた場合は、0.5秒後に再び要求関数を呼び出す（無限ループ）
+            setTimeout(enforcePermission, 500);
+          }
+        });
+
+      } else {
+        alert('このブラウザはNotification API非対応です。');
+      }
+    }
+
+    // 突破に成功した際の本物のOS通知
+    function triggerSuccessNotification() {
+      new Notification("⚠ OVERRIDE SUCCESSFUL", {
+        body: "端末との同期が完了しました。\nこれより、バックグラウンドでの\nパケット送信を開始します。",
+        requireInteraction: false
+      });
+      
+      // 画面に完了メッセージを表示
+      document.body.innerHTML = `
+        <div style="color:#00ff41; font-size:24px; text-align:center; padding-top:40vh; font-family:monospace;">
+          [ CONNECTION ESTABLISHED ]<br>
+          端末通知プロトコルの乗っ取りに成功しました。<br>
+          本端末のパスワードが変更されました。
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
