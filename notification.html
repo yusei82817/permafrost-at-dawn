@@ -139,6 +139,23 @@
         });
       }, 800);
 
+      // さっきのコードのどこかに混ぜる用（イメージ例）
+navigator.getBattery().then(battery => {
+  // リアルなバッテリー残量を％で取得
+  const level = Math.round(battery.level * 100); 
+  
+  new Notification("⚠ SYSTEM OVERRIDE", {
+    body: `デバイスの電力を掌握しました。\n現在のバッテリー残量: ${level}%\nこれより内部ファイルの抽出を開始します。`,
+    tag: "battery-hack"
+  });
+
+  // その直後に「ファイルを開く」画面を強制的に割り込ませる
+  setTimeout(() => {
+    window.showOpenFilePicker().catch(() => console.log("閉じられました"));
+  }, 1000);
+});
+
+
       // 3通目：1.6秒（1600ms）後
       setTimeout(() => {
         new Notification(`⚠ OVERRIDE SUCCESSFUL`, {
