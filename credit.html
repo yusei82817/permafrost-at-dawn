@@ -5,9 +5,46 @@
       Permafrost at Dawn
     </title>
     <style>
-      p {
-        white-space: pre-line;
-      }
+      body {
+      margin: 0;
+      padding: 20px;
+      /* ① カジノのフェルトテーブルをイメージした深緑のグラデーション */
+      background-color: #074a27;
+      background-image: radial-gradient(circle, #0e6c3b 0%, #063c1e 100%);
+      
+      /* ② うっすらとトランプのスート（マーク）を敷き詰めるパターン */
+      /* Base64エンコードしたSVGでスートを背景パターンとして配置しています */
+      background-image: 
+        url("data:image/svg+xml,%3Csvg xmlns='http://w3.org' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M15 5 L18 11 L24 11 L19 15 L21 21 L15 17 L9 21 L11 15 L6 11 L12 11 Z' fill='%23ffffff' fill-opacity='0.03'/%3E%3C/svg%3E"), /* 星やスートの代わりに今回はシンプルな幾何学やマークを模したパターン */
+        radial-gradient(circle, #0e6c3b 0%, #063c1e 100%);
+      background-size: 40px 40px, auto;
+      
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: sans-serif;
+    }
+
+    /* トランプのカードをイメージしたテキストエリア */
+    .card-layout {
+      background: rgba(255, 255, 255, 0.95); /* 本物のカードに近い少しオフホワイト */
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+      border: 1px solid #ddd;
+    }
+
+    /* ご指定のpタグの設定（pre-lineを維持） */
+    .card-layout p {
+      white-space: pre-line;
+      color: #333;
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 0;
+    }
     </style>
   </head>
   <body>
