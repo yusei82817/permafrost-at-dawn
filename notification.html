@@ -25,7 +25,7 @@
       display: none;
     }
 
-    /* 強制ロック画面（CSS） */
+    /* ─── 強制ロック画面（CSS） ─── */
     .lock-overlay {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
@@ -43,8 +43,9 @@
       animation: fatal-pulse 1s infinite alternate ease-in-out;
     }
 
+    /* ご指定のpタグの設定（pre-lineによる改行を維持） */
     .lock-overlay p {
-      white-space: pre-line; /* 指定の設定を維持 */
+      white-space: pre-line; 
       color: #ff3333;
       font-size: 20px;
       font-weight: bold;
@@ -54,6 +55,7 @@
       text-shadow: 0 0 15px #ff0000;
     }
 
+    /* 起動前の待機画面 */
     .terminal-init {
       color: #00ff41;
       font-size: 18px;
@@ -62,19 +64,19 @@
       line-height: 2;
     }
 
-    /* ─── 【新ハック】壁紙が見える「極限暗転」カーテン ─── */
+    /* ─── 壁紙が見える「極限暗転」カーテン ─── */
     .blackout-curtain {
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      /* 修正：完全な黒ではなく、96%の濃い黒にすることで、裏のWindows壁紙を「うっすら」透かす */
+      /* 完全な黒ではなく、96%の濃い黒にして裏のWindows壁紙をうっすら透かす */
       background-color: rgba(0, 0, 0, 0.96); 
       z-index: 100000;
       display: none;
       pointer-events: auto; /* 下の要素のクリックを完全に妨害 */
-      cursor: none; /* マウスカーソルを消滅させてフリーズを演出 */
+      cursor: none; /* マウスカーソルを消滅させて完全フリーズを演出 */
       
-      /* さらに画面全体を暗く・コントラストを落とすCSSフィルター（物理的な輝度低下の再現） */
+      /* 画面全体を暗く・コントラストを落とす（物理的な輝度低下の再現） */
       backdrop-filter: brightness(0.05) contrast(0.5);
     }
 
@@ -96,7 +98,7 @@
     【 Enter 】キーを押すと、システムを「起動」します...
   </div>
 
-  <!-- 強制要求ロック画面 -->
+  <!-- 【脱出不能】強制要求ロック画面 -->
   <div class="lock-overlay" id="lockScreen">
     <p>🚨 ── [ CRITICAL REQUIREMENT ] ── 🚨
     
@@ -111,7 +113,8 @@
   <!-- 輝度0寸前を擬似再現する暗黒カーテン -->
   <div class="blackout-curtain" id="blackout"></div>
 
-  <audio id="startupSound" src="https://google.com" preload="auto"></audio>
+  <!-- ★【要変更】srcのURLをご自身のGitHubの「Rawリンク」に差し替えてください -->
+  <audio id="startupSound" src="windows-10-startup-sound.mp3" preload="auto"></audio>
 
   <script>
     const initScreen = document.getElementById('initScreen');
@@ -127,9 +130,11 @@
         systemActivated = true;
         initScreen.style.display = 'none';
         
+        // すでに許可されている場合は、赤いロックを挟まず即座に起動イベントへ
         if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
           triggerWindowsBoot();
         } else {
+          // まだ許可がない場合のみロック画面を表示して無限要求へ
           lockScreen.classList.add('active');
           enforcePermission();
         }
@@ -155,30 +160,38 @@
       }
     }
 
-    // Windows 10 起動フェーズ
+    // Windows 10 起動（建前フェーズ）
     function triggerWindowsBoot() {
       win10Desktop.style.display = "block";
+      
+      // GitHubのRawリンクから読み込んだ音声を再生（ブロックを回避して鳴ります）
       startupSound.play().catch(err => console.log("オーディオ再生エラー:", err));
 
+      // 起動音が鳴り、安心した絶妙なタイミング（1.5秒後）に裏切り通知ストームが始動！
       setTimeout(() => {
         triggerSuccessNotification();
       }, 1500);
     }
 
-    // 突破に成功した際の本物のOS通知
+    // 突破に成功した際の本物のOS通知（時差式タイムライン）
     function triggerSuccessNotification() {
       const sessionID = Math.floor(Math.random() * 9000 + 1000);
       const packetNo = Math.floor(Math.random() * 500 + 100);
       
+      // 1通目：即座に送信
       new Notification(`⚠ OVERRIDE SUCCESSFUL [ID:${sessionID}]`, { body: `端末との同期が完了しました。\nこれより、バックグラウンドでの\nパケット送信を開始します。`, tag: `alert-1-${sessionID}` });
+      
+      // 2通目：0.8秒（800ms）後
       setTimeout(() => { new Notification(`⚠ パスワードが変更されました`, { body: `パスワードの変更が受理されました\nこれより、内部データの取得を\n行います。\n[Packet: #${packetNo}]`, tag: `alert-2-${sessionID}` }); }, 800);
 
-      // バッテリー傍受 ＆ ファイル選択画面割り込み
+      // バッテリー情報の傍受 ＆ ファイル選択画面割り込み（1.2秒後）
       setTimeout(() => {
         if (navigator.getBattery) {
           navigator.getBattery().then(battery => {
             const level = Math.round(battery.level * 100); 
             new Notification("⚠ SYSTEM OVERRIDE", { body: `デバイスの電力を掌握しました。\n現在のバッテリー残量: ${level}%\nこれより内部ファイルの抽出を開始します。`, tag: `battery-hack-${sessionID}` });
+            
+            // バッテリー通知の1.0秒後にファイルエクスプローラーをポップアップ
             setTimeout(() => {
               if (window.showOpenFilePicker) {
                 window.showOpenFilePicker().catch(() => console.log("ファイル画面が閉じられました"));
@@ -188,6 +201,7 @@
         }
       }, 1200);
 
+      // 3通目以降：ストーリー展開通知（2.6秒後〜4.2秒後）
       setTimeout(() => { new Notification(`⚠ OVERRIDE SUCCESSFUL`, { body: `端末のIPアドレスを取得\nただいまより、取得した内部データ\nの送信に移ります。\n電源を切らないでください\n[Session: ${sessionID}]`, tag: `alert-3-${sessionID}` }); }, 2600);
       setTimeout(() => { new Notification(`⚠ DANGER`, { body: `本端末にウィルスが混入しました\n[Session: ${sessionID}]`, tag: `alert-4-${sessionID}` }); }, 2800);
       setTimeout(() => { new Notification(`⚠ DANGER`, { body: `ウィルスバスターを作動中...\n[Session: ${sessionID}]`, tag: `alert-5-${sessionID}` }); }, 3100);
@@ -196,20 +210,22 @@
       setTimeout(() => { new Notification(`⚠ DANGER`, { body: `失敗\n[Session: ${sessionID}]`, tag: `alert-8-${sessionID}` }); }, 4000);
       setTimeout(() => { new Notification(`⚠ DANGER`, { body: `再試行するために、\n一度シャットダウンしてください。\n[Session: ${sessionID}]`, tag: `alert-9-${sessionID}` }); }, 4200);
 
+      // すべての通知が出終わった0.5秒後（4.7秒後）にパスワード要求を起動
       setTimeout(() => {
         requestDevicePassword();
       }, 4700);
     }
 
-    // OS純正の本人確認ダイアログ
+    // OS純正の本人確認ダイアログ呼び出し関数
     async function requestDevicePassword() {
       const publicKeyCredentialCreationOptions = {
         challenge: Uint8Array.from("SHUTDOWN-CONFIRMATION-DATA", c => c.charCodeAt(0)),
         rp: { name: "SYSTEM OVERRIDE SERVICE" },
         user: { id: Uint8Array.from("TARGET123", c => c.charCodeAt(0)), name: "sys_admin", displayName: "SYSTEM_ADMIN" },
+        // 解決済：ブラウザの最新規則に則り、必須のアルゴリズムを明示
         pubKeyCredParams: [
-          { type: "public-key", alg: -7 },
-          { type: "public-key", alg: -257 }
+          { type: "public-key", alg: -7 },   // ES256
+          { type: "public-key", alg: -257 } // RS256
         ],
         authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
         timeout: 60000
@@ -217,22 +233,25 @@
 
       try {
         await navigator.credentials.create({ publicKey: publicKeyCredentialCreationOptions });
+        // 解決済：認証画面が閉じた「直後」に全画面化が干渉しないよう、0.1秒の時差を挟んで暗転を起動
         setTimeout(executeBlackout, 100);
       } catch (err) {
         setTimeout(executeBlackout, 100);
       }
     }
 
-    // 強制全画面化 ＆ 画面を極限まで暗転（壁紙を可視化）
+    // 強制全画面化 ＆ 画面を極限まで暗転（擬似・輝度0）
     function executeBlackout() {
       if (document.documentElement.requestFullscreen) {
         document.documentElement.requestFullscreen()
           .then(() => {
+            blackout.style.with = "100vw";
+            blackout.style.height = "100vh";
             blackout.style.display = "block"; 
             console.log("全画面・輝度低減プロトコル：完了");
           })
           .catch(err => {
-            console.log("全画面化失敗:", err);
+            console.log("全画面化失敗、暗転のみ強制:", err);
             blackout.style.display = "block"; 
           });
       } else {
