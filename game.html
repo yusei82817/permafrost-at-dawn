@@ -26,110 +26,145 @@
  scene.fogColor=new BABYLON.Color3(.12,.16,.19);
  const camera=new BABYLON.UniversalCamera("playerCamera",new BABYLON.Vector3(0,1.7,-5),scene);
 
- // Gradient night sky: deep navy overhead, muted blue-gray near the horizon.
- const sky=BABYLON.MeshBuilder.CreateSphere("nightSky",{diameter:500,segments:32},scene);
- const skyMaterial=new BABYLON.StandardMaterial("nightSkyMaterial",scene);
- skyMaterial.backFaceCulling=false;
- skyMaterial.disableLighting=true;
- skyMaterial.emissiveColor=BABYLON.Color3.White();
- skyMaterial.specularColor=BABYLON.Color3.Black();
- skyMaterial.fogEnabled=false;
- const skyPositions=sky.getVerticesData(BABYLON.VertexBuffer.PositionKind);
- const skyColors=[];
- for(let i=0;i<skyPositions.length;i+=3){
-     const height=skyPositions[i+1]/250;
-     const t=Math.max(0,Math.min(1,(height+0.12)/0.82));
-     const low=new BABYLON.Color3(0.12,0.17,0.21);
-     const high=new BABYLON.Color3(0.012,0.022,0.075);
-     const color=BABYLON.Color3.Lerp(low,high,t);
-     skyColors.push(color.r,color.g,color.b,1);
+ // Dynamic day-night cycle: one full in-game day takes two real hours.
+ // The sun and moon follow the same broad east-west arc, opposite one another.
+ const DAY_LENGTH_SECONDS = 2 * 60 * 60;
+ const DAY_ANGULAR_SPEED = Math.PI * 2 / DAY_LENGTH_SECONDS;
+ let dayTime = 0.25; // Start near dawn; 0.25 = sunrise, 0.5 = noon, 0.75 = sunset.
+ const sky = BABYLON.MeshBuilder.CreateSphere("nightSky", {diameter:500, segments:32}, scene);
+ const skyMaterial = new BABYLON.StandardMaterial("nightSkyMaterial", scene);
+ skyMaterial.backFaceCulling = false;
+ skyMaterial.disableLighting = true;
+ skyMaterial.emissiveColor = BABYLON.Color3.White();
+ skyMaterial.specularColor = BABYLON.Color3.Black();
+ skyMaterial.fogEnabled = false;
+ const skyPositions = sky.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+ const skyColors = [];
+ for (let i=0; i<skyPositions.length; i+=3) {
+   const height = skyPositions[i+1] / 250;
+   const t = Math.max(0, Math.min(1, (height+0.12)/0.82));
+   const low = new BABYLON.Color3(0.12,0.17,0.21);
+   const high = new BABYLON.Color3(0.012,0.022,0.075);
+   const color = BABYLON.Color3.Lerp(low, high, t);
+   skyColors.push(color.r,color.g,color.b,1);
  }
- sky.setVerticesData(BABYLON.VertexBuffer.ColorKind,skyColors);
- skyMaterial.useVertexColors=true;
- sky.material=skyMaterial;
- sky.isPickable=false;
+ sky.setVerticesData(BABYLON.VertexBuffer.ColorKind, skyColors);
+ skyMaterial.useVertexColors = true;
+ sky.material = skyMaterial;
+ sky.isPickable = false;
+
  camera.minZ=.08; camera.fov=1.05; camera.inertia=.12; camera.angularSensibility=2400;
- camera.keysUp=[87,38];camera.keysDown=[83,40];camera.keysLeft=[65,37];camera.keysRight=[68,39];
+ camera.keysUp=[87,38]; camera.keysDown=[83,40]; camera.keysLeft=[65,37]; camera.keysRight=[68,39];
  camera.speed=.65; camera.applyGravity=false; camera.checkCollisions=false; camera.position.y=1.7; camera.ellipsoid=new BABYLON.Vector3(.38,.85,.38);
- // Hold standing eye height while ground collision is validated.
  scene.collisionsEnabled=false;
  camera.attachControl(canvas,true);
- const hemi=new BABYLON.HemisphericLight("skyLight",new BABYLON.Vector3(0,1,0),scene);hemi.intensity=.38;
- const sun=new BABYLON.DirectionalLight("dawnLight",new BABYLON.Vector3(-.35,-.8,.25),scene);sun.position=new BABYLON.Vector3(15,25,-10);sun.intensity=.28;
- // 月本体
-const moon = BABYLON.MeshBuilder.CreateSphere(
-    "moon",
-    { diameter: 8, segments: 16 },
-    scene
-);
 
-moon.position = new BABYLON.Vector3(0, 45, 80);
+ const hemi = new BABYLON.HemisphericLight("skyLight", new BABYLON.Vector3(0,1,0), scene);
+ hemi.intensity = 0.38;
+ const sunLight = new BABYLON.DirectionalLight("sunLight", new BABYLON.Vector3(0,-1,0), scene);
+ sunLight.position = new BABYLON.Vector3(0,80,0);
+ sunLight.intensity = 0.28;
 
-// 月の材質
-const moonMaterial = new BABYLON.StandardMaterial(
-    "moonMaterial",
-    scene
-);
+ // Sun disc and soft halo.
+ const sunDisc = BABYLON.MeshBuilder.CreateSphere("sunDisc", {diameter:10, segments:16}, scene);
+ const sunMaterial = new BABYLON.StandardMaterial("sunMaterial", scene);
+ sunMaterial.diffuseColor = new BABYLON.Color3(1.0,0.78,0.48);
+ sunMaterial.emissiveColor = new BABYLON.Color3(1.0,0.48,0.16);
+ sunMaterial.specularColor = BABYLON.Color3.Black();
+ sunMaterial.disableLighting = true;
+ sunDisc.material = sunMaterial;
+ sunDisc.isPickable = false;
+ const sunHalo = BABYLON.MeshBuilder.CreateSphere("sunHalo", {diameter:15, segments:16}, scene);
+ const sunHaloMaterial = new BABYLON.StandardMaterial("sunHaloMaterial", scene);
+ sunHaloMaterial.emissiveColor = new BABYLON.Color3(1.0,0.35,0.12);
+ sunHaloMaterial.diffuseColor = BABYLON.Color3.Black();
+ sunHaloMaterial.specularColor = BABYLON.Color3.Black();
+ sunHaloMaterial.alpha = 0.10;
+ sunHaloMaterial.disableLighting = true;
+ sunHalo.material = sunHaloMaterial;
+ sunHalo.isPickable = false;
 
-moonMaterial.diffuseColor =
-    new BABYLON.Color3(0.72, 0.74, 0.78);
+ // Moon disc and halo.
+ const moon = BABYLON.MeshBuilder.CreateSphere("moon", {diameter:8, segments:16}, scene);
+ const moonMaterial = new BABYLON.StandardMaterial("moonMaterial", scene);
+ moonMaterial.diffuseColor = new BABYLON.Color3(0.72,0.74,0.78);
+ moonMaterial.emissiveColor = new BABYLON.Color3(0.28,0.29,0.32);
+ moonMaterial.specularColor = BABYLON.Color3.Black();
+ moonMaterial.disableLighting = true;
+ moon.material = moonMaterial;
+ moon.isPickable = false;
+ const moonHalo = BABYLON.MeshBuilder.CreateSphere("moonHalo", {diameter:10.5, segments:16}, scene);
+ const moonHaloMaterial = new BABYLON.StandardMaterial("moonHaloMaterial", scene);
+ moonHaloMaterial.emissiveColor = new BABYLON.Color3(0.18,0.2,0.24);
+ moonHaloMaterial.diffuseColor = BABYLON.Color3.Black();
+ moonHaloMaterial.specularColor = BABYLON.Color3.Black();
+ moonHaloMaterial.alpha = 0.13;
+ moonHaloMaterial.disableLighting = true;
+ moonHalo.material = moonHaloMaterial;
+ moonHalo.isPickable = false;
 
-moonMaterial.emissiveColor =
-    new BABYLON.Color3(0.28, 0.29, 0.32);
+ // Sparse star field. Visibility is faded by daylight; thin instances keep it cheap.
+ const starMaterial = new BABYLON.StandardMaterial("starMaterial", scene);
+ starMaterial.emissiveColor = new BABYLON.Color3(0.58,0.64,0.72);
+ starMaterial.diffuseColor = new BABYLON.Color3(0.25,0.3,0.36);
+ starMaterial.disableLighting = true;
+ const star = BABYLON.MeshBuilder.CreateSphere("star", {diameter:0.22, segments:4}, scene);
+ star.material = starMaterial;
+ star.isVisible = false;
+ star.isPickable = false;
+ const starMatrices = [];
+ for (let i=0; i<240; i++) {
+   const azimuth = Math.random()*Math.PI*2;
+   const elevation = 0.08 + Math.random()*1.25;
+   const radius = 128;
+   const x = Math.cos(elevation)*Math.cos(azimuth)*radius;
+   const y = Math.sin(elevation)*radius;
+   const z = Math.cos(elevation)*Math.sin(azimuth)*radius;
+   const scale = 0.45 + Math.random()*1.1;
+   starMatrices.push(BABYLON.Matrix.Compose(new BABYLON.Vector3(scale,scale,scale), BABYLON.Quaternion.Identity(), new BABYLON.Vector3(x,y,z)));
+ }
+ const starData = new Float32Array(starMatrices.length*16);
+ starMatrices.forEach((matrix,index)=>matrix.copyToArray(starData,index*16));
+ star.thinInstanceSetBuffer("matrix",starData,16,true);
+ star.isVisible = true;
 
-moonMaterial.specularColor =
-    BABYLON.Color3.Black();
-
-moon.material = moonMaterial;
-
-// A subtle translucent halo gives the moon a soft glow.
-const moonHalo = BABYLON.MeshBuilder.CreateSphere(
-    "moonHalo",
-    { diameter: 10.5, segments: 16 },
-    scene
-);
-moonHalo.position.copyFrom(moon.position);
-const haloMaterial = new BABYLON.StandardMaterial("moonHaloMaterial", scene);
-haloMaterial.emissiveColor = new BABYLON.Color3(0.18, 0.2, 0.24);
-haloMaterial.diffuseColor = BABYLON.Color3.Black();
-haloMaterial.specularColor = BABYLON.Color3.Black();
-haloMaterial.alpha = 0.13;
-haloMaterial.disableLighting = true;
-moonHalo.material = haloMaterial;
-moonHalo.isPickable = false;
-
-// Sparse star field, rendered as thin instances to keep it lightweight.
-const starMaterial = new BABYLON.StandardMaterial("starMaterial", scene);
-starMaterial.emissiveColor = new BABYLON.Color3(0.58, 0.64, 0.72);
-starMaterial.diffuseColor = new BABYLON.Color3(0.25, 0.3, 0.36);
-starMaterial.disableLighting = true;
-const star = BABYLON.MeshBuilder.CreateSphere(
-    "star",
-    { diameter: 0.22, segments: 4 },
-    scene
-);
-star.material = starMaterial;
-star.isVisible = false;
-star.isPickable = false;
-const starMatrices = [];
-for (let i = 0; i < 240; i++) {
-    const azimuth = Math.random() * Math.PI * 2;
-    const elevation = 0.08 + Math.random() * 1.25;
-    const radius = 128;
-    const x = Math.cos(elevation) * Math.cos(azimuth) * radius;
-    const y = Math.sin(elevation) * radius;
-    const z = Math.cos(elevation) * Math.sin(azimuth) * radius;
-    const scale = 0.45 + Math.random() * 1.1;
-    starMatrices.push(BABYLON.Matrix.Compose(
-        new BABYLON.Vector3(scale, scale, scale),
-        BABYLON.Quaternion.Identity(),
-        new BABYLON.Vector3(x, y, z)
-    ));
-}
-const starData = new Float32Array(starMatrices.length * 16);
-starMatrices.forEach((matrix, index) => matrix.copyToArray(starData, index * 16));
-star.thinInstanceSetBuffer("matrix", starData, 16, true);
-star.isVisible = true;
+ // Put the sun on an east-to-west arc; the moon follows the opposite side.
+ // The large sky sphere follows the player, while celestial bodies stay far away.
+ const celestialRadius = 150;
+ const worldUp = new BABYLON.Vector3(0,1,0);
+ function updateDayNight(dtSeconds) {
+   dayTime = (dayTime + dtSeconds / DAY_LENGTH_SECONDS) % 1;
+   const angle = dayTime * Math.PI * 2;
+   const sunX = Math.cos(angle) * celestialRadius;
+   const sunY = Math.sin(angle) * celestialRadius;
+   const sunZ = 35;
+   sunDisc.position.set(camera.position.x + sunX, sunY, camera.position.z + sunZ);
+   sunHalo.position.copyFrom(sunDisc.position);
+   moon.position.set(camera.position.x - sunX, -sunY, camera.position.z - sunZ);
+   moonHalo.position.copyFrom(moon.position);
+   // Light points from the sun toward the ground; below-horizon light fades away.
+   const daylight = Math.max(0, Math.sin(angle));
+   sunLight.position.set(sunDisc.position.x, sunDisc.position.y, sunDisc.position.z);
+   sunLight.direction = new BABYLON.Vector3(-sunX, -Math.max(1,sunY), -sunZ).normalize();
+   sunLight.intensity = 0.03 + daylight * 0.85;
+   hemi.intensity = 0.12 + daylight * 0.42;
+   const night = 1 - daylight;
+   const skyNight = new BABYLON.Color3(0.012,0.022,0.075);
+   const skyDay = new BABYLON.Color3(0.38,0.58,0.78);
+   const horizonNight = new BABYLON.Color3(0.035,0.055,0.09);
+   const horizonDay = new BABYLON.Color3(0.68,0.66,0.54);
+   const blend = Math.max(0,Math.min(1,daylight*1.2));
+   const top = BABYLON.Color3.Lerp(skyNight,skyDay,blend);
+   const horizon = BABYLON.Color3.Lerp(horizonNight,horizonDay,blend);
+   scene.clearColor = new BABYLON.Color4(top.r,top.g,top.b,1);
+   scene.fogColor = BABYLON.Color3.Lerp(new BABYLON.Color3(0.035,0.05,0.08),new BABYLON.Color3(0.42,0.48,0.48),blend);
+   sunDisc.isVisible = sunY > -25;
+   sunHalo.isVisible = sunY > -25;
+   moon.isVisible = sunY < 25;
+   moonHalo.isVisible = sunY < 25;
+   starMaterial.alpha = Math.max(0, Math.min(1, (0.35-daylight)*3));
+   starMaterial.emissiveColor = new BABYLON.Color3(0.58,0.64,0.72).scale(starMaterial.alpha);
+ }
  const ground=BABYLON.MeshBuilder.CreateGround("field",{width:180,height:180,subdivisions:2},scene);
  ground.checkCollisions=false; ground.position.y=0;
  const groundMat=new BABYLON.StandardMaterial("frozenEarth",scene);const groundTexture=new BABYLON.Texture("https://raw.githubusercontent.com/yusei82817/permafrost-at-dawn/main/assets/grass_green.jpg",scene);groundTexture.uScale=36;groundTexture.vScale=36;groundMat.diffuseTexture=groundTexture;groundMat.diffuseColor=new BABYLON.Color3(.52,.62,.46);groundMat.specularColor=new BABYLON.Color3(.005,.005,.005);groundMat.emissiveColor=new BABYLON.Color3(0,0,0);ground.material=groundMat;
@@ -166,7 +201,7 @@ star.isVisible = true;
  canvas.addEventListener("pointerup",e=>{if(moveTouch&&e.pointerId===moveTouch.id){moveTouch=null;input.forward=0;input.side=0;}});
  canvas.addEventListener("pointercancel",()=>{moveTouch=null;input.forward=0;input.side=0;});
  let elapsed=0;
- engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/16.67,2);elapsed+=dt/60;sky.position.copyFrom(camera.position);if(started){updateTouch();camera.position.y=1.7;camera.position.x=Math.max(-82,Math.min(82,camera.position.x));camera.position.z=Math.max(-82,Math.min(82,camera.position.z));document.getElementById("position").textContent=Math.round(camera.position.x)+", "+Math.round(camera.position.z);const msg=document.getElementById("message");if(elapsed>5&&elapsed<12)msg.style.opacity=String(Math.min(1,(elapsed-5)/2));else if(elapsed>=12)msg.style.opacity="0";}scene.render();});
+ engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/16.67,2);elapsed+=dt/60;sky.position.copyFrom(camera.position);updateDayNight(engine.getDeltaTime()/1000);if(started){updateTouch();camera.position.y=1.7;camera.position.x=Math.max(-82,Math.min(82,camera.position.x));camera.position.z=Math.max(-82,Math.min(82,camera.position.z));document.getElementById("position").textContent=Math.round(camera.position.x)+", "+Math.round(camera.position.z);const msg=document.getElementById("message");if(elapsed>5&&elapsed<12)msg.style.opacity=String(Math.min(1,(elapsed-5)/2));else if(elapsed>=12)msg.style.opacity="0";}scene.render();});
  window.addEventListener("resize",()=>engine.resize());
 })();
 </script>
