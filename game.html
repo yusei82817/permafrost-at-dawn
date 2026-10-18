@@ -30,7 +30,7 @@
  // The sun and moon follow the same broad east-west arc, opposite one another.
  const DAY_LENGTH_SECONDS = 2 * 60 * 60;
  const DAY_ANGULAR_SPEED = Math.PI * 2 / DAY_LENGTH_SECONDS;
- let dayTime = 0.25; // Start near dawn; 0.25 = sunrise, 0.5 = noon, 0.75 = sunset.
+ let dayTime = 0.0; // Start at sunrise; 0.25 = noon, 0.5 = sunset, 0.75 = midnight.
  const sky = BABYLON.MeshBuilder.CreateSphere("nightSky", {diameter:500, segments:32}, scene);
  const skyMaterial = new BABYLON.StandardMaterial("nightSkyMaterial", scene);
  skyMaterial.backFaceCulling = false;
@@ -157,6 +157,14 @@
    const top = BABYLON.Color3.Lerp(skyNight,skyDay,blend);
    const horizon = BABYLON.Color3.Lerp(horizonNight,horizonDay,blend);
    scene.clearColor = new BABYLON.Color4(top.r,top.g,top.b,1);
+   // Recolor the gradient sky itself as well as the scene background.
+   for (let i=0; i<skyPositions.length; i+=3) {
+     const height = skyPositions[i+1] / 250;
+     const t = Math.max(0, Math.min(1, (height+0.12)/0.82));
+     const color = BABYLON.Color3.Lerp(horizon, top, t);
+     skyColors[i] = color.r; skyColors[i+1] = color.g; skyColors[i+2] = color.b;
+   }
+   sky.updateVerticesData(BABYLON.VertexBuffer.ColorKind, skyColors);
    scene.fogColor = BABYLON.Color3.Lerp(new BABYLON.Color3(0.035,0.05,0.08),new BABYLON.Color3(0.42,0.48,0.48),blend);
    sunDisc.isVisible = sunY > -25;
    sunHalo.isVisible = sunY > -25;
@@ -201,7 +209,7 @@
  canvas.addEventListener("pointerup",e=>{if(moveTouch&&e.pointerId===moveTouch.id){moveTouch=null;input.forward=0;input.side=0;}});
  canvas.addEventListener("pointercancel",()=>{moveTouch=null;input.forward=0;input.side=0;});
  let elapsed=0;
- engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/16.67,2);elapsed+=dt/60;sky.position.copyFrom(camera.position);updateDayNight(engine.getDeltaTime()/1000);if(started){updateTouch();camera.position.y=1.7;camera.position.x=Math.max(-82,Math.min(82,camera.position.x));camera.position.z=Math.max(-82,Math.min(82,camera.position.z));document.getElementById("position").textContent=Math.round(camera.position.x)+", "+Math.round(camera.position.z);const msg=document.getElementById("message");if(elapsed>5&&elapsed<12)msg.style.opacity=String(Math.min(1,(elapsed-5)/2));else if(elapsed>=12)msg.style.opacity="0";}scene.render();});
+ engine.runRenderLoop(()=>{const frameSeconds=engine.getDeltaTime()/1000;const dt=Math.min(frameSeconds*60,2);elapsed+=dt/60;sky.position.copyFrom(camera.position);updateDayNight(frameSeconds);if(started){updateTouch();camera.position.y=1.7;camera.position.x=Math.max(-82,Math.min(82,camera.position.x));camera.position.z=Math.max(-82,Math.min(82,camera.position.z));document.getElementById("position").textContent=Math.round(camera.position.x)+", "+Math.round(camera.position.z);const msg=document.getElementById("message");if(elapsed>5&&elapsed<12)msg.style.opacity=String(Math.min(1,(elapsed-5)/2));else if(elapsed>=12)msg.style.opacity="0";}scene.render();});
  window.addEventListener("resize",()=>engine.resize());
 })();
 </script>
