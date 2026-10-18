@@ -28,7 +28,7 @@
 
  // Dynamic day-night cycle: one full in-game day takes two real hours.
  // The sun and moon follow the same broad east-west arc, opposite one another.
- const DAY_LENGTH_SECONDS = 2 * 60 * 60;
+ const DAY_LENGTH_SECONDS = 60 * 60;
  const DAY_ANGULAR_SPEED = Math.PI * 2 / DAY_LENGTH_SECONDS;
  let dayTime = 0.0; // Start at sunrise; 0.25 = noon, 0.5 = sunset, 0.75 = midnight.
  const sky = BABYLON.MeshBuilder.CreateSphere("nightSky", {diameter:500, segments:32}, scene);
