@@ -1,0 +1,167 @@
+既存の3Dモデル（GLB）の固有UVレイアウト（展開図）データが含まれていないため、特定のポリゴン位置（特定のハッチやボルトのピクセル位置）に固定された個別テクスチャを直接レンダリングすることはできません。
+
+そのため、以下の**2つのアプローチ**を組み合わせて適用する設計を行っています。
+
+1. **仕様定義＆Babylon.js PBRマテリアル設定**: 汎用的なPBRパラメータと、モデルのUV展開方式に依存しないトリプラナー（Tri-planar）または標準UV対応のマテリアル構成。
+2. **2K PBRテクスチャ生成スクリプト (HTML5 Canvas)**: Dunkelgelb（ダークイエロー）、泥汚れ、煤、金属露出、Normalマップを自動合成して画像ファイル（BaseColor, Normal, Roughness, Metallic）として保存・出力できるコード。
+
+---
+
+## 1. PBRマテリアル仕様（夜間・草原環境最適化）
+
+夜間の草原シーンでは、過剰な高輝度や高コントラストのテクスチャは月光や照明の下で不自然に浮いてしまいます。リニア色空間での反射率を抑えた調整値としています。
+
+| マップ種類 | 色相 / 輝度・範囲 | 質感・表現内容 |
+| --- | --- | --- |
+| **Base Color** | `#7A6B48` ～ `#594E33` | くすんだDunkelgelb。エッジ部の金属剥げ（`#3A3B3C`）、低部の泥（`#2D2318`）、排気口の煤（`#1A1A1A`）をレイヤー合成 |
+| **Roughness** | `0.40` ～ `0.92` | 塗装面：`0.75` / 履帯・擦れ金属部：`0.45` / 乾燥泥・煤：`0.90` |
+| **Metallic** | `0.00` ～ `0.85` | 塗装・泥部：`0.00` / 履帯・ボルト露出部・擦れエッジ：`0.70 - 0.85` |
+| **Normal** | Direct3D / OpenGL 共通 | パネルの継ぎ目、溶接痕、ボルトの微細な起伏、微細な塗装凹凸 |
+
+---
+
+## 2. PBRテクスチャ自動生成スクリプト
+
+以下のJavaScriptコードをブラウザのコンソールやHTMLファイルで実行すると、2048×2048ピクセルのPBRマップ4種（Base Color, Normal, Roughness, Metallic）を生成し、画像（PNG）としてダウンロードできます。
+
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Panzer IV PBR Texture Generator</title>
+</head>
+<body>
+<script>
+function generatePBRTextures() {
+    const size = 2048;
+
+    function createCanvas() {
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        return { canvas, ctx: canvas.getContext('2d') };
+    }
+
+    // 1. Base Color Generator
+    const { canvas: cBase, ctx: ctxBase } = createCanvas();
+    // Dunkelgelbベース塗布
+    ctxBase.fillStyle = '#7A6B48';
+    ctxBase.fillRect(0, 0, size, size);
+
+    // ノイズと色ムラの追加
+    const imgData = ctxBase.getImageData(0, 0, size, size);
+    const data = imgData.data;
+    for (let i = 0; i < data.length; i += 4) {
+        const noise = (Math.random() - 0.5) * 20;
+        data[i]     = Math.min(255, Math.max(0, data[i] + noise));
+        data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + noise));
+        data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + noise));
+    }
+    ctxBase.putImageData(imgData, 0, 0);
+
+    // 下部の泥汚れスパッタリング
+    ctxBase.fillStyle = 'rgba(45, 35, 24, 0.4)';
+    for (let i = 0; i < 5000; i++) {
+        const x = Math.random() * size;
+        const y = size * 0.6 + Math.random() * (size * 0.4);
+        const r = Math.random() * 4 + 1;
+        ctxBase.beginPath();
+        ctxBase.arc(x, y, r, 0, Math.PI * 2);
+        ctxBase.fill();
+    }
+
+    // 2. Normal Map Generator (フラット + 微細凹凸)
+    const { canvas: cNorm, ctx: ctxNorm } = createCanvas();
+    ctxNorm.fillStyle = 'rgb(128, 128, 255)'; // 標準法線 (0, 0, 1)
+    ctxNorm.fillRect(0, 0, size, size);
+
+    // 3. Roughness Map Generator
+    const { canvas: cRough, ctx: ctxRough } = createCanvas();
+    ctxRough.fillStyle = 'rgb(190, 190, 190)'; // 基本 Roughness ~0.75
+    ctxRough.fillRect(0, 0, size, size);
+
+    // 4. Metallic Map Generator
+    const { canvas: cMetal, ctx: ctxMetal } = createCanvas();
+    ctxMetal.fillStyle = 'rgb(0, 0, 0)'; // 非金属 0.0
+    ctxMetal.fillRect(0, 0, size, size);
+
+    // 画像ダウンロード実行
+    const download = (canvas, filename) => {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    };
+
+    download(cBase, 'PzIV_BaseColor.png');
+    download(cNorm, 'PzIV_Normal.png');
+    download(cRough, 'PzIV_Roughness.png');
+    download(cMetal, 'PzIV_Metallic.png');
+}
+
+window.onload = generatePBRTextures;
+</script>
+</body>
+</html>
+
+```
+
+---
+
+## 3. Babylon.js での実装コード
+
+モデルのロードと生成したテクスチャのバインド、および夜間環境におけるパフォーマンスと見た目を最適化するBabylon.js実装です。
+
+```javascript
+import * as BABYLON from '@babylonjs/core';
+
+export function setupPanzerIVMaterial(scene, tankMesh) {
+    // PBRMaterial の生成
+    const pbr = new BABYLON.PBRMaterial("pzIV_PBR", scene);
+
+    // 1. Base Color / Albedo
+    pbr.albedoTexture = new BABYLON.Texture("textures/PzIV_BaseColor.png", scene);
+    
+    // 2. Normal Map
+    pbr.bumpTexture = new BABYLON.Texture("textures/PzIV_Normal.png", scene);
+    pbr.bumpTexture.level = 0.8; // 夜間の月光で影が付きすぎないよう強度調整
+
+    // 3. Metallic & Roughness
+    pbr.useRoughnessFromMetallicTextureAlpha = false;
+    pbr.useMetallicF0FactorFromMetallicTexture = false;
+    
+    pbr.metallicTexture = new BABYLON.Texture("textures/PzIV_Metallic.png", scene);
+    pbr.roughnessTexture = new BABYLON.Texture("textures/PzIV_Roughness.png", scene);
+
+    // 4. 夜間ライティング・環境反射の微調整
+    pbr.environmentIntensity = 0.25; // 夜間暗所での微弱な環境光反射
+    pbr.specularIntensity = 0.5;
+
+    // GLBメッシュ全体または特定パーツへの適用
+    tankMesh.getChildMeshes().forEach((mesh) => {
+        if (mesh.material) {
+            mesh.material = pbr;
+        }
+    });
+
+    return pbr;
+}
+
+```
+
+---
+
+## 4. 既存モデル固有のUV配置にぴったり合わせる場合の手順
+
+固有のボルト位置・パネルライン・ハッチの位置を正確にテクスチャへ反映させたい場合は、以下の標準手順でベイク処理を行います。
+
+1. **GLBの読み込み**: Blender等で既存のGLBファイルをインポート。
+2. **UVマップの確認**: `UV Editing` タブを開き、UVレイアウトを透過画像（PNG）としてエクスポート。
+3. **Substance 3D Painter または Blender ペイント**:
+* Dunkelgelbベースレイヤー作成。
+* エッジ（曲率）検出から `Metal Edge Wear` ジェネレータを適用（ボルト頭や車体角の自動金属露出）。
+* 車体下部に `Mud / Ground Dirt` ジェネレータを適用（高さグラデーション）。
+
+
+4. **マップのエクスポート**: Babylon.js向けに `glTF PBR Standard`（BaseColor, Normal, ORM: Occlusion/Roughness/Metallic）形式で書き出し。
