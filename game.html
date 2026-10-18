@@ -50,7 +50,7 @@
  sky.isPickable=false;
  camera.minZ=.08; camera.fov=1.05; camera.inertia=.12; camera.angularSensibility=2400;
  camera.keysUp=[87,38];camera.keysDown=[83,40];camera.keysLeft=[65,37];camera.keysRight=[68,39];
- camera.speed=.22; camera.applyGravity=false; camera.checkCollisions=false; camera.position.y=1.7; camera.ellipsoid=new BABYLON.Vector3(.38,.85,.38);
+ camera.speed=.65; camera.applyGravity=false; camera.checkCollisions=false; camera.position.y=1.7; camera.ellipsoid=new BABYLON.Vector3(.38,.85,.38);
  // Hold standing eye height while ground collision is validated.
  scene.collisionsEnabled=false;
  camera.attachControl(canvas,true);
@@ -156,13 +156,13 @@ star.isVisible = true;
  canvas.addEventListener("pointermove",e=>{if(!dragging||e.pointerType==="mouse"||!lookPointer)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;camera.rotation.y+=dx*.004;camera.rotation.x+=dy*.003;camera.rotation.x=Math.max(-1.25,Math.min(1.25,camera.rotation.x));lastX=e.clientX;lastY=e.clientY;});
  canvas.addEventListener("pointerup",()=>{dragging=false;});
  canvas.addEventListener("pointercancel",()=>{dragging=false;});
- window.addEventListener("keydown",e=>{if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();if(e.key.toLowerCase()==="shift")camera.speed=.38;});
- window.addEventListener("keyup",e=>{if(e.key.toLowerCase()==="shift")camera.speed=.22;});
+ window.addEventListener("keydown",e=>{if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();if(e.key.toLowerCase()==="shift")camera.speed=1.1;});
+ window.addEventListener("keyup",e=>{if(e.key.toLowerCase()==="shift")camera.speed=.65;});
  // On touch screens, left half of the canvas acts as a simple virtual movement pad.
  let moveTouch=null;
  canvas.addEventListener("pointerdown",e=>{if(e.pointerType!=="touch"||e.clientX>innerWidth*.48)return;moveTouch={id:e.pointerId,x:e.clientX,y:e.clientY};});
  canvas.addEventListener("pointermove",e=>{if(!moveTouch||e.pointerId!==moveTouch.id)return;const dx=e.clientX-moveTouch.x,dy=e.clientY-moveTouch.y;camera.cameraDirection.x=0;input.side=Math.max(-1,Math.min(1,dx/45));input.forward=Math.max(-1,Math.min(1,-dy/45));});
- function updateTouch(){if(moveTouch){const f=input.forward,s=input.side;camera.cameraDirection.addInPlace(new BABYLON.Vector3(s*.018,0,f*.018));}}
+ function updateTouch(){if(moveTouch){const f=input.forward,s=input.side;camera.cameraDirection.addInPlace(new BABYLON.Vector3(s*.045,0,f*.045));}}
  canvas.addEventListener("pointerup",e=>{if(moveTouch&&e.pointerId===moveTouch.id){moveTouch=null;input.forward=0;input.side=0;}});
  canvas.addEventListener("pointercancel",()=>{moveTouch=null;input.forward=0;input.side=0;});
  let elapsed=0;
