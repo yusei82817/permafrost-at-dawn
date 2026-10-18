@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Permafrost at Dawn | Prototype</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#101719;color:#edf3f2;font-family:system-ui,sans-serif}#renderCanvas{display:block;width:100%;height:100%;touch-action:none;outline:none}#hud{position:fixed;inset:0;pointer-events:none;text-shadow:0 2px 8px #000}#brand{position:absolute;top:18px;left:20px;font-size:12px;letter-spacing:.22em;color:#cbd7d4}#status{position:absolute;left:20px;bottom:18px;font-size:12px;line-height:1.7;color:#e0e8e5}#hint{position:absolute;right:18px;bottom:18px;max-width:260px;text-align:right;font-size:12px;line-height:1.8;color:#d7e0dd}#message{position:absolute;left:50%;top:16%;transform:translateX(-50%);font-size:clamp(16px,2.4vw,26px);letter-spacing:.12em;text-align:center;opacity:0;transition:opacity 1s}#crosshair{position:absolute;left:50%;top:50%;width:5px;height:5px;border:1px solid #eaf4f1;border-radius:50%;transform:translate(-50%,-50%);opacity:.55}#start{position:fixed;inset:0;display:grid;place-items:center;background:linear-gradient(#101719bb,#101719ee);z-index:3}#panel{width:min(540px,calc(100% - 36px));padding:30px;border:1px solid #a7c0bb55;background:#101719e8;box-shadow:0 20px 70px #0008}#panel h1{font-size:clamp(24px,5vw,42px);font-weight:500;letter-spacing:.12em;margin:0 0 10px}#panel p{color:#c5d1ce;line-height:1.8;font-size:14px}button{pointer-events:auto;border:1px solid #c4d8d3;background:#dce9e5;color:#17201f;padding:12px 20px;font:inherit;cursor:pointer}button:hover{background:#fff}#controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.small{font-size:12px!important;color:#93a7a2!important}
+@media(max-width:700px){#hint{right:12px;bottom:12px;max-width:170px}#status{left:12px;bottom:12px}#brand{left:12px;top:12px}}
+</style>
+</head>
+<body>
+<canvas id="renderCanvas" aria-label="3D game scene"></canvas>
+<div id="hud"><div id="brand">PERMAFROST AT DAWN / FIELD PROTOTYPE</div><div id="crosshair"></div><div id="message">THE DAWN IS STILL FAR AWAY</div><div id="status">FIELD TEST 01<br>POSITION: <span id="position">0, 0</span></div><div id="hint">WASD / 矢印キー：移動<br>マウス：視点操作<br>スマホ：画面をドラッグして視点操作</div></div>
+<div id="start"><div id="panel"><h1>PERMAFROST<br>AT DAWN</h1><p>FIELD PROTOTYPE 01</p><p>夜明け前の草地を歩き、周囲を探索する3Dプロトタイプ。まずは移動と視点操作、地形、霧、環境音のない静かな導入シーンから。</p><p class="small">PC：WASD / 矢印キーで移動、クリックでマウス視点操作。スマートフォン・タブレット：画面左側で移動、右側をドラッグして視点操作。</p><div id="controls"><button id="startButton">探索を開始</button><button id="openingButton">オープニングを見る</button></div></div></div>
+<script src="https://cdn.babylonjs.com/babylon.js"></script>
+<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+<script>
+(() => {
+ const canvas=document.getElementById("renderCanvas");
+ const engine=new BABYLON.Engine(canvas,true,{preserveDrawingBuffer:false,stencil:true,adaptToDeviceRatio:true});
+ engine.setHardwareScalingLevel(Math.max(1,window.devicePixelRatio||1)/Math.min(window.devicePixelRatio||1,1.5));
+ const scene=new BABYLON.Scene(engine);
+ scene.clearColor=new BABYLON.Color4(.055,.075,.085,1);
+ scene.fogMode=BABYLON.Scene.FOGMODE_EXP2; scene.fogDensity=.008;
+ scene.fogColor=new BABYLON.Color3(.12,.16,.17);
+ const camera=new BABYLON.UniversalCamera("playerCamera",new BABYLON.Vector3(0,1.7,-5),scene);
+ camera.minZ=.08; camera.fov=1.05; camera.inertia=.12; camera.angularSensibility=2400;
+ camera.keysUp=[87,38];camera.keysDown=[83,40];camera.keysLeft=[65,37];camera.keysRight=[68,39];
+ camera.speed=.11; camera.applyGravity=true; camera.checkCollisions=true; camera.ellipsoid=new BABYLON.Vector3(.38,.85,.38);
+ scene.gravity=new BABYLON.Vector3(0,-.22,0); scene.collisionsEnabled=true;
+ camera.attachControl(canvas,true);
+ const hemi=new BABYLON.HemisphericLight("skyLight",new BABYLON.Vector3(0,1,0),scene);hemi.intensity=.72;
+ const sun=new BABYLON.DirectionalLight("dawnLight",new BABYLON.Vector3(-.35,-.8,.25),scene);sun.position=new BABYLON.Vector3(15,25,-10);sun.intensity=.55;
+ const ground=BABYLON.MeshBuilder.CreateGround("field",{width:180,height:180,subdivisions:2},scene);
+ ground.checkCollisions=true;
+ const groundMat=new BABYLON.StandardMaterial("frozenEarth",scene);groundMat.diffuseColor=new BABYLON.Color3(.16,.2,.16);groundMat.specularColor=new BABYLON.Color3(.03,.04,.04);groundMat.emissiveColor=new BABYLON.Color3(.015,.022,.02);ground.material=groundMat;
+ const grassMat=new BABYLON.StandardMaterial("grassMat",scene);grassMat.diffuseColor=new BABYLON.Color3(.19,.27,.16);grassMat.specularColor=new BABYLON.Color3(.01,.01,.01);
+ const grassBlade=BABYLON.MeshBuilder.CreateBox("grassBlade",{width:.045,height:.3,depth:.045},scene);grassBlade.material=grassMat;grassBlade.isVisible=false;
+ // Reuse one geometry via thin instances to keep the scene lightweight.
+ const matrices=[]; const count=1700;
+ for(let i=0;i<count;i++){const x=(Math.random()-.5)*145,z=(Math.random()-.5)*145;if(Math.abs(x)<2&&z<8&&z>-10)continue;const h=.18+Math.random()*.6;const m=BABYLON.Matrix.Compose(new BABYLON.Vector3(.65+Math.random()*.8,h,.65+Math.random()*.8),BABYLON.Quaternion.FromEulerAngles((Math.random()-.5)*.25,Math.random()*Math.PI,0),new BABYLON.Vector3(x,h*.5,z));matrices.push(m);}
+ const matrixData=new Float32Array(matrices.length*16);matrices.forEach((m,i)=>m.copyToArray(matrixData,i*16));grassBlade.thinInstanceSetBuffer("matrix",matrixData,16,true);grassBlade.isVisible=true;grassBlade.isPickable=false;
+ const trunkMat=new BABYLON.StandardMaterial("trunkMat",scene);trunkMat.diffuseColor=new BABYLON.Color3(.19,.18,.14);
+ const leafMat=new BABYLON.StandardMaterial("leafMat",scene);leafMat.diffuseColor=new BABYLON.Color3(.12,.19,.17);
+ for(let i=0;i<46;i++){const x=(Math.random()-.5)*130,z=(Math.random()-.5)*130;if(Math.abs(x)<7&&z<12&&z>-12)continue;const h=2.2+Math.random()*3.5;const trunk=BABYLON.MeshBuilder.CreateCylinder("treeTrunk",{height:h*.48,diameter:.28+Math.random()*.18},scene);trunk.position.set(x,h*.24,z);trunk.material=trunkMat;trunk.checkCollisions=true;const crown=BABYLON.MeshBuilder.CreateCylinder("treeCrown",{height:h*.8,diameterTop:0,diameterBottom:1.6+Math.random()*1.4,tessellation:6},scene);crown.position.set(x,h*.65,z);crown.material=leafMat;crown.isPickable=false;}
+ // Low, distant silhouettes establish a horizon without expensive assets.
+ const ridgeMat=new BABYLON.StandardMaterial("ridgeMat",scene);ridgeMat.diffuseColor=new BABYLON.Color3(.1,.14,.15);ridgeMat.specularColor=new BABYLON.Color3(0,0,0);
+ for(let i=0;i<18;i++){const ridge=BABYLON.MeshBuilder.CreateBox("ridge",{width:8+Math.random()*15,height:3+Math.random()*9,depth:8+Math.random()*5},scene);ridge.position.set((i-9)*12,1,-58-Math.random()*8);ridge.rotation.y=Math.random()*.4;ridge.material=ridgeMat;}
+ const input={forward:0,side:0,lookX:0,lookY:0};let started=false,dragging=false,lastX=0,lastY=0,lookPointer=false;
+ const overlay=document.getElementById("start");
+ function begin(){started=true;overlay.style.display="none";camera.attachControl(canvas,true);if(!('ontouchstart' in window)&&canvas.requestPointerLock)canvas.requestPointerLock().catch(()=>{});}
+ document.getElementById("startButton").addEventListener("click",begin);
+ document.getElementById("openingButton").addEventListener("click",()=>location.href="op.html");
+ canvas.addEventListener("click",()=>{if(started&&!('ontouchstart' in window)&&document.pointerLockElement!==canvas&&canvas.requestPointerLock)canvas.requestPointerLock().catch(()=>{});});
+ canvas.addEventListener("pointerdown",e=>{if(!started||e.pointerType==="mouse")return;dragging=true;lastX=e.clientX;lastY=e.clientY;lookPointer=e.clientX>innerWidth*.48;canvas.setPointerCapture(e.pointerId);});
+ canvas.addEventListener("pointermove",e=>{if(!dragging||e.pointerType==="mouse"||!lookPointer)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;camera.rotation.y+=dx*.004;camera.rotation.x+=dy*.003;camera.rotation.x=Math.max(-1.25,Math.min(1.25,camera.rotation.x));lastX=e.clientX;lastY=e.clientY;});
+ canvas.addEventListener("pointerup",()=>{dragging=false;});
+ canvas.addEventListener("pointercancel",()=>{dragging=false;});
+ window.addEventListener("keydown",e=>{if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();if(e.key.toLowerCase()==="shift")camera.speed=.19;});
+ window.addEventListener("keyup",e=>{if(e.key.toLowerCase()==="shift")camera.speed=.11;});
+ // On touch screens, left half of the canvas acts as a simple virtual movement pad.
+ let moveTouch=null;
+ canvas.addEventListener("pointerdown",e=>{if(e.pointerType!=="touch"||e.clientX>innerWidth*.48)return;moveTouch={id:e.pointerId,x:e.clientX,y:e.clientY};});
+ canvas.addEventListener("pointermove",e=>{if(!moveTouch||e.pointerId!==moveTouch.id)return;const dx=e.clientX-moveTouch.x,dy=e.clientY-moveTouch.y;camera.cameraDirection.x=0;input.side=Math.max(-1,Math.min(1,dx/45));input.forward=Math.max(-1,Math.min(1,-dy/45));});
+ function updateTouch(){if(moveTouch){const f=input.forward,s=input.side;camera.cameraDirection.addInPlace(new BABYLON.Vector3(s*.018,0,f*.018));}}
+ canvas.addEventListener("pointerup",e=>{if(moveTouch&&e.pointerId===moveTouch.id){moveTouch=null;input.forward=0;input.side=0;}});
+ canvas.addEventListener("pointercancel",()=>{moveTouch=null;input.forward=0;input.side=0;});
+ let elapsed=0;
+ engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/16.67,2);elapsed+=dt/60;if(started){updateTouch();camera.position.x=Math.max(-82,Math.min(82,camera.position.x));camera.position.z=Math.max(-82,Math.min(82,camera.position.z));document.getElementById("position").textContent=Math.round(camera.position.x)+", "+Math.round(camera.position.z);const msg=document.getElementById("message");if(elapsed>5&&elapsed<12)msg.style.opacity=String(Math.min(1,(elapsed-5)/2));else if(elapsed>=12)msg.style.opacity="0";}scene.render();});
+ window.addEventListener("resize",()=>engine.resize());
+})();
+</script>
+</body>
+</html>
