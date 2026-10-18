@@ -31,11 +31,11 @@
  // Hold standing eye height while ground collision is validated.
  scene.collisionsEnabled=false;
  camera.attachControl(canvas,true);
- const hemi=new BABYLON.HemisphericLight("skyLight",new BABYLON.Vector3(0,1,0),scene);hemi.intensity=.72;
- const sun=new BABYLON.DirectionalLight("dawnLight",new BABYLON.Vector3(-.35,-.8,.25),scene);sun.position=new BABYLON.Vector3(15,25,-10);sun.intensity=.55;
+ const hemi=new BABYLON.HemisphericLight("skyLight",new BABYLON.Vector3(0,1,0),scene);hemi.intensity=.38;
+ const sun=new BABYLON.DirectionalLight("dawnLight",new BABYLON.Vector3(-.35,-.8,.25),scene);sun.position=new BABYLON.Vector3(15,25,-10);sun.intensity=.28;
  const ground=BABYLON.MeshBuilder.CreateGround("field",{width:180,height:180,subdivisions:2},scene);
  ground.checkCollisions=false; ground.position.y=0;
- const groundMat=new BABYLON.StandardMaterial("frozenEarth",scene);const groundTexture=new BABYLON.Texture("https://raw.githubusercontent.com/yusei82817/permafrost-at-dawn/main/assets/grass_green.jpg",scene);groundTexture.uScale=36;groundTexture.vScale=36;groundMat.diffuseTexture=groundTexture;groundMat.diffuseColor=new BABYLON.Color3(.72,.78,.68);groundMat.specularColor=new BABYLON.Color3(.015,.02,.015);groundMat.emissiveColor=new BABYLON.Color3(.015,.02,.012);ground.material=groundMat;
+ const groundMat=new BABYLON.StandardMaterial("frozenEarth",scene);const groundTexture=new BABYLON.Texture("https://raw.githubusercontent.com/yusei82817/permafrost-at-dawn/main/assets/grass_green.jpg",scene);groundTexture.uScale=36;groundTexture.vScale=36;groundMat.diffuseTexture=groundTexture;groundMat.diffuseColor=new BABYLON.Color3(.52,.62,.46);groundMat.specularColor=new BABYLON.Color3(.005,.005,.005);groundMat.emissiveColor=new BABYLON.Color3(0,0,0);ground.material=groundMat;
  const grassMat=new BABYLON.StandardMaterial("grassMat",scene);grassMat.diffuseColor=new BABYLON.Color3(.19,.27,.16);grassMat.specularColor=new BABYLON.Color3(.01,.01,.01);
  const grassBlade=BABYLON.MeshBuilder.CreateBox("grassBlade",{width:.045,height:.3,depth:.045},scene);grassBlade.material=grassMat;grassBlade.isVisible=false;
  // Reuse one geometry via thin instances to keep the scene lightweight.
