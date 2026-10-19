@@ -55,8 +55,9 @@
 
  camera.minZ=.08; camera.fov=1.05; camera.inertia=.12; camera.angularSensibility=2400;
  camera.keysUp=[87,38]; camera.keysDown=[83,40]; camera.keysLeft=[65,37]; camera.keysRight=[68,39];
- camera.speed=.65; camera.applyGravity=false; camera.checkCollisions=false; camera.position.y=1.7; camera.ellipsoid=new BABYLON.Vector3(.38,.85,.38);
- scene.collisionsEnabled=false;
+ camera.speed=.65; camera.applyGravity=false; camera.checkCollisions=true; camera.position.y=1.7; camera.ellipsoid=new BABYLON.Vector3(.38,.85,.38);
+ // Enable Babylon collision checks for solid terrain and tree trunks. Keep vertical height fixed for this walking prototype.
+ scene.collisionsEnabled=true;
  camera.attachControl(canvas,true);
 
  const hemi = new BABYLON.HemisphericLight("skyLight", new BABYLON.Vector3(0,1,0), scene);
@@ -174,7 +175,7 @@
    starMaterial.emissiveColor = new BABYLON.Color3(0.58,0.64,0.72).scale(starMaterial.alpha);
  }
  const ground=BABYLON.MeshBuilder.CreateGround("field",{width:180,height:180,subdivisions:2},scene);
- ground.checkCollisions=false; ground.position.y=0;
+ ground.checkCollisions=true; ground.position.y=0;
  const groundMat=new BABYLON.StandardMaterial("frozenEarth",scene);const groundTexture=new BABYLON.Texture("https://raw.githubusercontent.com/yusei82817/permafrost-at-dawn/main/assets/grass_green.jpg",scene);groundTexture.uScale=36;groundTexture.vScale=36;groundMat.diffuseTexture=groundTexture;groundMat.diffuseColor=new BABYLON.Color3(.52,.62,.46);groundMat.specularColor=new BABYLON.Color3(.005,.005,.005);groundMat.emissiveColor=new BABYLON.Color3(0,0,0);ground.material=groundMat;
  const grassMat=new BABYLON.StandardMaterial("grassMat",scene);grassMat.diffuseColor=new BABYLON.Color3(.19,.27,.16);grassMat.specularColor=new BABYLON.Color3(.01,.01,.01);
  const grassBlade=BABYLON.MeshBuilder.CreateBox("grassBlade",{width:.045,height:.3,depth:.045},scene);grassBlade.material=grassMat;grassBlade.isVisible=false;
@@ -209,7 +210,7 @@
  canvas.addEventListener("pointerup",e=>{if(moveTouch&&e.pointerId===moveTouch.id){moveTouch=null;input.forward=0;input.side=0;}});
  canvas.addEventListener("pointercancel",()=>{moveTouch=null;input.forward=0;input.side=0;});
  let elapsed=0;
- engine.runRenderLoop(()=>{const frameSeconds=engine.getDeltaTime()/1000;const dt=Math.min(frameSeconds*60,2);elapsed+=dt/60;sky.position.copyFrom(camera.position);updateDayNight(frameSeconds);if(started){updateTouch();camera.position.y=1.7;camera.position.x=Math.max(-82,Math.min(82,camera.position.x));camera.position.z=Math.max(-82,Math.min(82,camera.position.z));document.getElementById("position").textContent=Math.round(camera.position.x)+", "+Math.round(camera.position.z);const msg=document.getElementById("message");if(elapsed>5&&elapsed<12)msg.style.opacity=String(Math.min(1,(elapsed-5)/2));else if(elapsed>=12)msg.style.opacity="0";}scene.render();});
+ engine.runRenderLoop(()=>{const frameSeconds=engine.getDeltaTime()/1000;const dt=Math.min(frameSeconds*60,2);elapsed+=dt/60;sky.position.copyFrom(camera.position);updateDayNight(frameSeconds);if(started){updateTouch();camera.position.x=Math.max(-82,Math.min(82,camera.position.x));camera.position.z=Math.max(-82,Math.min(82,camera.position.z));document.getElementById("position").textContent=Math.round(camera.position.x)+", "+Math.round(camera.position.z);const msg=document.getElementById("message");if(elapsed>5&&elapsed<12)msg.style.opacity=String(Math.min(1,(elapsed-5)/2));else if(elapsed>=12)msg.style.opacity="0";}scene.render();});
  window.addEventListener("resize",()=>engine.resize());
 })();
 </script>
